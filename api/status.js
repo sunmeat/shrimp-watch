@@ -28,6 +28,7 @@ export default async function handler(_request, response) {
       source: priceState.source,
       storeSpecificAvailability: priceState.storeSpecificAvailability
     } : null,
+    priceHistory: Array.isArray(priceState?.priceHistory) ? priceState.priceHistory : [],
     monitoring: {
       scheduledBy: 'GitHub Actions',
       frequency: 'Every 6 hours',
