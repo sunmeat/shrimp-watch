@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck } from 'lucide-react';
+import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee } from 'lucide-react';
 
 const PRODUCT = 'Королевская креветка сырая, дефростированная, 40/60';
+const SONYA_WISHES = [
+  'Ой, золотце, шоб у тебя всё было и тебе за это ничего не было! А креветочка пусть будет по акции!',
+  'Таки ты человек с хорошим вкусом! Не каждый день встретишь такую душу и такую охоту за скидками.',
+  'Шоб здоровье было крепкое, настроение морское, а цены в магазине маленькие-маленькие!',
+  'Сонечка тебе желает: денег полный кошелёк, дома мир, на сердце тепло, а креветки по цене семечек!',
+  'Ты посмотри на него, какой умничка! И скидки ищет, и красиво живёт. Шоб тебе всё возвращалось добром!',
+  'Пусть море будет ласковым, одесский ветер попутным, а каждая покупка приносит радость, а не сердцебиение на кассе!'
+];
 
 function squeak(context) {
   const now = context.currentTime;
@@ -24,6 +32,7 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState(null);
+  const [wishIndex, setWishIndex] = useState(() => Math.floor(Math.random() * SONYA_WISHES.length));
   const audioRef = useRef(null);
   const saleRef = useRef(false);
 
@@ -43,10 +52,7 @@ export default function App() {
     };
     loadStatus();
     const timer = window.setInterval(loadStatus, 60_000);
-    return () => {
-      active = false;
-      window.clearInterval(timer);
-    };
+    return () => { active = false; window.clearInterval(timer); };
   }, []);
 
   useEffect(() => {
@@ -72,77 +78,97 @@ export default function App() {
     return () => window.clearInterval(timer);
   }, []);
 
-  const isSale = Boolean(status?.latestCheck?.isSale);
-  const currentPrice = status?.latestCheck?.priceUah;
-  const checkedAt = status?.latestCheck?.checkedAt
-    ? new Date(status.latestCheck.checkedAt).toLocaleString('ru-RU')
-    : null;
+  useEffect(() => {
+    const timer = window.setInterval(() => setWishIndex((index) => (index + 1) % SONYA_WISHES.length), 12000);
+    return () => window.clearInterval(timer);
+  }, []);
 
-  return <main className="shell">
+  const latest = status?.latestCheck;
+  const isSale = Boolean(latest?.isSale);
+  const currentPrice = latest?.priceUah;
+  const checkedAt = latest?.checkedAt ? new Date(latest.checkedAt).toLocaleString('ru-RU') : null;
+
+  return <main className="shell odessa-shell">
+    <div className="odessa-ribbon">ОДЕССА МАМА · МОРЕ РЯДОМ · СКИДКИ ПО ДЕЛУ</div>
     <nav className="nav">
       <a className="brand" href="#"><span>🦐</span><b>SHRIMP<span>WATCH</span><small>КРЕВЕТОЧНАЯ РАЗВЕДКА</small></b></a>
-      <span className="live"><i/> МОНИТОРИНГ ЦЕН</span>
+      <span className="live"><i/> СВОИ ЦЕНЫ ЗНАЕМ</span>
     </nav>
 
     <section className="hero">
       <div>
-        <div className="eyebrow"><Sparkles size={15}/> ОПЕРАЦИЯ «ВЫГОДНАЯ КРЕВЕТКА»</div>
-        <h1>Ловим скидки.<br/><em>Не креветок.</em></h1>
-        <p className="lead">Следим за ценой королевских креветок. Появится акция, и креветочная разведка подаст сигнал.</p>
-        <div className="actions"><a className="btn mint" href="#alerts"><Bell size={17}/> Настроить уведомления</a></div>
-        <div className="fine"><span>✓ Без лишнего спама</span><span>✳ Проверка по расписанию</span></div>
+        <div className="eyebrow"><Sparkles size={15}/> ПРИВЕТ, ДУША МОЯ!</div>
+        <h1>Море рядом.<br/><em>Креветки по уму.</em></h1>
+        <p className="lead">У нас всё по-одесски: без паники, с разговором, с хорошим настроением и чтоб покупка была выгодная, а не «мама, шо это было?».</p>
+        <div className="actions"><a className="btn mint" href="#price"><Fish size={17}/> Ну-ка, покажи цену</a><a className="btn dark" href="#sonya"><Heart size={16}/> К тёте Соне</a></div>
+        <div className="fine"><span>✓ Без лишней суеты</span><span>✳ Проверяем цену каждые 6 часов</span></div>
       </div>
-      <div className="hero-note">
-        <ShieldCheck size={30}/>
-        <h2>Никаких лишних деталей</h2>
-        <p>На странице нет адреса магазина или карты. Только креветочные новости и цена.</p>
+      <div className="hero-note sonya-hero">
+        <div className="sonya-portrait">👒</div>
+        <div className="eyebrow">ОДЕССКАЯ СЛУЖБА ЗАБОТЫ</div>
+        <h2>Тётя Соня всё видит!</h2>
+        <p>Не волнуйся, золотце. Мы тут за ценами следим, креветочки танцуют, а жизнь, между прочим, прекрасная штука. Особенно когда со скидкой.</p>
+        <span className="sonya-sign">Целую, обнимаю. Твоя Соня ❤️</span>
       </div>
     </section>
 
     <section className="dance-section" aria-label="Постоянный танец креветок">
       <div className="dance-heading">
-        <div><div className="eyebrow"><Waves size={15}/> КРЕВЕТОЧНЫЙ ТАНЦПОЛ</div><h2>Танцуют всегда.</h2></div>
-        <span className={isSale ? 'sale-pill sale-active' : 'sale-pill'}><i/>{isSale ? 'АКЦИЯ! ПИ-ПИ-ПИ!' : 'ЖДЁМ СКИДКУ'}</span>
+        <div><div className="eyebrow"><Waves size={15}/> ПРИВОЗ НЕ СПИТ</div><h2>Танцуют, как на свадьбе у племянницы.</h2></div>
+        <span className={isSale ? 'sale-pill sale-active' : 'sale-pill'}><i/>{isSale ? 'АКЦИЯ! ПИ-ПИ-ПИ!' : 'ПОКА ТАНЦУЕМ ДЛЯ ДУШИ'}</span>
       </div>
       <div className="dance">
         <div className="orbit one"/><div className="orbit two"/>
         <span className="shrimp s1">🦐</span><span className="shrimp s2">🦐</span><span className="shrimp s3">🦐</span>
         <span className="shrimp s4">🦐</span><i className="star a">✦</i><i className="star b">✧</i>
-        <div className="caption">♫ ДВИЖЕНИЕ НЕ ПРЕКРАЩАЕТСЯ</div>
+        <div className="caption">♫ НЕ ТАНЦУЕТ ТОЛЬКО ТОТ, КТО НЕ СЛЫШИТ МУЗЫКУ</div>
       </div>
-      <p className="sound-note">При обнаружении акции креветки пищат. Для звука коснись экрана один раз: мобильный браузер должен разрешить воспроизведение.</p>
+      <p className="sound-note">При обнаружении акции креветки пищат. На телефоне сначала коснись экрана, чтобы разрешить звук. Ну шо, поехали!</p>
     </section>
 
-    <section className="cards">
-      <article className="card">
-        <div className="label">ЦЕЛЬ ОПЕРАЦИИ <span className="tag">40/60</span></div>
-        <div className="product">🦐</div><h2>Королевские креветки</h2><p>{PRODUCT}</p><hr/>
-        <div className="price"><div><small>Последняя цена на странице товара</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'} <sub>₴ / 100 г</sub></strong></div><span>{isSale ? 'Обнаружена акция' : 'Статус цены'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Ожидаем проверки'}</span></div>
+    <section className="cards" id="price">
+      <article className="card price-card">
+        <div className="label">КРЕВЕТОЧНЫЙ КУРС <span className="tag">40/60</span></div>
+        <div className="product">🦐</div><h2>Королевская креветка</h2><p>{PRODUCT}</p><hr/>
+        <div className="price"><div><small>Цена за 100 граммов, как положено</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Ждём'} <sub>{currentPrice != null ? '₴ / 100 г' : ''}</sub></strong></div><span>{isSale ? '🎉 Есть акция!' : 'Без паники'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Ждём свежую проверку'}</span></div>
+        {!latest?.checkedAt && <p className="price-hint">Тётя Соня не станет выдумывать цифры. Как только мониторинг получит свежую цену, она появится здесь.</p>}
+        <a className="link" href="https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122" target="_blank" rel="noreferrer">Проверить у продавца ↗</a>
       </article>
       <article className="card status-card">
-        <div className="label">СОСТОЯНИЕ РАЗВЕДКИ <ShieldCheck size={15}/></div>
-        <div className="status-icon">{isSale ? '🎉' : '📡'}</div>
-        <h2>{isSale ? 'Есть повод пищать!' : 'Наблюдение продолжается'}</h2>
-        <p>{status?.latestCheck ? 'Последняя проверка цены получена. Данные обновляются автоматически.' : 'Ожидаем первую успешную проверку источника цен.'}</p>
+        <div className="label">НАСТРОЕНИЕ НА ПРИВОЗЕ <ShieldCheck size={15}/></div>
+        <div className="status-icon">{isSale ? '🥳' : '☕'}</div>
+        <h2>{isSale ? 'Ой, держите меня семеро!' : 'Спокойно, мы всё проверим'}</h2>
+        <p>{latest?.checkedAt ? 'Цена получена, наблюдение продолжается. Статус обновляется автоматически.' : 'Мониторинг ждёт успешной проверки страницы товара. Старые цифры за свежие выдавать не будем.'}</p>
         <div className="warning">Цена берётся с публичной страницы товара. Наличие в конкретном магазине не подтверждается.</div>
       </article>
     </section>
 
+    <section className="sonya-card" id="sonya">
+      <div className="sonya-big">👒</div>
+      <div className="sonya-copy">
+        <div className="eyebrow"><Heart size={15}/> СЛОВО ОТ ТЁТИ СОНИ</div>
+        <h2>А теперь комплимент, и не спорь!</h2>
+        <p className="sonya-wish">«{SONYA_WISHES[wishIndex]}»</p>
+        <button className="btn sonya-btn" type="button" onClick={() => setWishIndex((index) => (index + 1 + Math.floor(Math.random() * (SONYA_WISHES.length - 1))) % SONYA_WISHES.length)}><Coffee size={17}/> Сонечка, ещё пожелание!</button>
+      </div>
+      <div className="sonya-stamp">ОДЕССА<br/>МАМА<br/>♥</div>
+    </section>
+
     <section className="alerts" id="alerts">
-      <div><div className="eyebrow"><Mail size={15}/> СИГНАЛ ПО ПОЧТЕ</div><h2>Пусть скидка<br/>сама тебя найдёт.</h2><p>Форма пока демонстрационная: адрес не отправляется и не сохраняется на сервере.</p></div>
+      <div><div className="eyebrow"><Mail size={15}/> ПИСЬМО С ПРИВОЗА</div><h2>Пусть скидка<br/>сама тебя найдёт.</h2><p>Форма пока демонстрационная: адрес не отправляется и не сохраняется. Не обещаем писем, пока не подключена отправка.</p></div>
       <form onSubmit={e => {e.preventDefault();setSubmitted(true)}}>
         <label htmlFor="email">ТВОЙ EMAIL</label>
         <div className="input"><Mail size={17}/><input id="email" type="email" placeholder="you@example.com" value={email} onChange={e=>{setEmail(e.target.value);setSubmitted(false)}} required/></div>
-        <button className="btn mint full" type="submit">{submitted ? <><CircleCheck size={17}/> Адрес принят в демо</> : <><Bell size={17}/> Хочу знать о скидке</>}</button>
+        <button className="btn mint full" type="submit">{submitted ? <><CircleCheck size={17}/> Это пока демо, золотце</> : <><Bell size={17}/> Хочу знать о скидке</>}</button>
         <small className="note">Никакие введённые данные не сохраняются.</small>
       </form>
     </section>
 
     <section className="steps">
-      <div><b>01</b><h3>Следим за ценой</h3><p>Проверяем публичную страницу товара по расписанию.</p></div>
-      <div><b>02</b><h3>Ловим скидку</h3><p>Сравниваем цену и ищем признаки акции.</p></div>
-      <div><b>03</b><h3>Включаем диско</h3><p>Креветки танцуют постоянно и пищат при акции.</p></div>
+      <div><b>01</b><h3>Смотрим цену</h3><p>Без фокусов и гаданий, как на Дерибасовской.</p></div>
+      <div><b>02</b><h3>Ловим скидку</h3><p>Если цена падает, креветочная разведка подаёт знак.</p></div>
+      <div><b>03</b><h3>Живём красиво</h3><p>Танцуем, улыбаемся и помним: нервы дороже креветок.</p></div>
     </section>
-    <footer><b>🦐 SHRIMPWATCH</b><span>Сделано с любовью к морепродуктам и скидкам.</span><small><i/> КРЕВЕТОЧНЫЙ МОНИТОРИНГ</small></footer>
+    <footer><b>🦐 SHRIMPWATCH · ОДЕССА МАМА</b><span>Шоб у тебя всё было хорошо, а цены были хорошие ещё лучше!</span><small><i/> СВОИМ ВСЕГДА РАДЫ</small></footer>
   </main>;
 }
