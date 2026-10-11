@@ -20,3 +20,55 @@
 .facts-foot{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;line-height:1.7;color:#d2c1a4}
 @media(max-width:900px){.facts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.facts-section{padding:24px}}
 @media(max-width:560px){.facts-top{flex-direction:column;gap:15px}.facts-grid{grid-template-columns:1fr}.fact-card{min-height:0;padding:18px}.facts-section{padding:19px}.facts-top h2{font-size:27px}}
+
+/* 100 фактов, креветочный индекс и домашняя кухня */
+.fact-feature{display:grid;grid-template-columns:112px 1fr;align-items:center;gap:24px;min-height:230px;padding:30px;border:1px solid #d6a75c70;border-radius:14px;background:radial-gradient(ellipse at 0 0,#c7473520,transparent 55%),#071b22a8}
+.fact-feature-icon{display:grid;place-items:center;width:100px;height:100px;border-radius:24px;background:#c7473520;border:1px solid #d6a75c50;font-size:56px}
+.fact-category{display:inline-flex;padding:6px 9px;border:1px solid #d6a75c66;border-radius:99px;color:#efc36f;font:10px 'DM Mono',monospace;letter-spacing:.08em}
+.fact-feature h3{font-size:clamp(23px,3.5vw,34px);letter-spacing:-.04em;margin:14px 0 10px;color:#f3d9a4}
+.fact-feature p{font-size:14px;line-height:1.9;color:#b4c8c2;margin:0;max-width:750px}
+.facts-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:18px}
+.facts-actions>span{font-size:11px;color:#91aaa9}
+.index-section,.recipes-section{margin:24px 0;padding:32px;border:1px solid #d6a75c45;border-radius:16px;background:linear-gradient(145deg,rgba(23,59,62,.82),rgba(10,31,37,.88))}
+.index-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:24px}
+.index-heading h2{font-size:clamp(28px,4vw,38px);letter-spacing:-.055em;margin:13px 0 9px}
+.index-heading p{font-size:13px;line-height:1.8;color:#a8bcbb;margin:0;max-width:660px}
+.index-stamp{flex-shrink:0;padding:10px 13px;border:1px solid #d6a75c66;border-radius:99px;color:#efc36f;font:10px 'DM Mono',monospace;letter-spacing:.08em}
+.index-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.index-metric{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:12px;background:#071b2280;min-width:0}
+.index-metric small{font:9px 'DM Mono',monospace;letter-spacing:.08em;color:#91aaa9}
+.index-metric strong{font-size:clamp(19px,2.5vw,28px);letter-spacing:-.04em;color:#f3d9a4;overflow-wrap:anywhere}
+.index-metric span{font-size:10px;line-height:1.6;color:#91aaa9}
+.chart-panel{padding:20px;border:1px solid var(--line);border-radius:12px;background:#071b2270}
+.chart-title{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;margin-bottom:16px}
+.chart-title span{font-size:10px;color:#91aaa9}
+.price-chart{height:220px;display:flex;align-items:stretch;gap:7px;padding:14px 0 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.chart-column{position:relative;flex:1;min-width:27px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
+.chart-value{font:9px 'DM Mono',monospace;color:#e8c57d;white-space:nowrap}
+.chart-bar{width:min(100%,26px);min-height:5px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#e5b75e,#c74735);box-shadow:0 0 15px #c7473522}
+.chart-column small{position:absolute;bottom:-18px;font:8px 'DM Mono',monospace;color:#91aaa9;white-space:nowrap}
+.chart-empty{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px;padding:20px}
+.chart-empty>span{font-size:35px}.chart-empty b{font-size:14px;color:#f3d9a4}.chart-empty p{font-size:11px;line-height:1.7;color:#91aaa9;max-width:440px;margin:0}
+.chart-note{font-size:10px;line-height:1.7;color:#829c9a;margin:27px 0 0}
+.recipe-layout{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:16px;align-items:start}
+.recipe-list{display:flex;flex-direction:column;gap:8px}
+.recipe-tab{display:flex;align-items:center;gap:11px;width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;background:#071b2280;color:#eef7f5;text-align:left;cursor:pointer;transition:border-color .2s,background .2s}
+.recipe-tab>span:first-child{font-size:24px}
+.recipe-tab>svg{flex-shrink:0;color:#91aaa9}
+.recipe-tab-copy{display:flex;flex:1;flex-direction:column;gap:5px;min-width:0}
+.recipe-tab-copy b{font-size:11px;line-height:1.45}
+.recipe-tab-copy small{font-size:10px;color:#91aaa9}
+.recipe-tab-active{border-color:#d6a75caa;background:#c7473525}
+.recipe-tab-active .recipe-tab-copy b{color:#f3d9a4}
+.recipe-detail{padding:24px;border:1px solid #d6a75c55;border-radius:12px;background:#071b2280;min-width:0}
+.recipe-hero-icon{font-size:43px;margin-bottom:12px}
+.recipe-meta{display:flex;gap:8px;flex-wrap:wrap}
+.recipe-meta span{padding:6px 9px;border-radius:99px;background:#173b3e;color:#efc36f;font-size:10px}
+.recipe-detail h3{font-size:24px;line-height:1.2;letter-spacing:-.04em;margin:14px 0 8px;color:#f3d9a4}
+.recipe-subtitle{font-size:12px;line-height:1.7;color:#a8bcbb;margin:0 0 20px}
+.recipe-detail h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#efc36f;margin:22px 0 10px}
+.ingredients,.recipe-steps{padding-left:20px;margin:0;color:#b4c8c2;font-size:12px;line-height:1.9}
+.ingredients li,.recipe-steps li{padding-left:3px;margin:4px 0}
+.recipe-safety{margin-top:22px;padding:13px;border-left:2px solid #c74735;background:#c7473515;color:#cbb9a2;font-size:10px;line-height:1.8}
+@media(max-width:850px){.index-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.recipe-layout{grid-template-columns:1fr}.recipe-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.facts-section,.index-section,.recipes-section{padding:19px}.fact-feature{grid-template-columns:1fr;gap:15px;padding:20px;min-height:0}.fact-feature-icon{width:76px;height:76px;font-size:42px;border-radius:18px}.fact-feature p{font-size:13px}.facts-actions{align-items:flex-start;flex-direction:column}.index-heading{flex-direction:column}.index-metrics{grid-template-columns:1fr 1fr}.index-metric{padding:13px}.index-metric small{font-size:8px}.index-metric strong{font-size:19px}.chart-panel{padding:13px}.price-chart{gap:4px}.chart-column{min-width:23px}.chart-value{font-size:8px}.recipe-list{grid-template-columns:1fr}.recipe-detail{padding:18px}.recipe-detail h3{font-size:21px}}
