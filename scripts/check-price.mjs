@@ -89,6 +89,12 @@ async function main() {
   const saleStarted = prices.isSale && (!previous || !previous.isSale);
   const shouldAlert = Boolean(priceDropped || saleStarted);
 
+  const previousHistory = Array.isArray(previous?.priceHistory) ? previous.priceHistory : [];
+  const priceHistory = [
+    ...previousHistory,
+    { priceUah: prices.currentPrice, checkedAt: now },
+  ].slice(-180);
+
   const state = {
     product: productName,
     productUrl,
@@ -96,6 +102,7 @@ async function main() {
     regularPrice: prices.regularPrice,
     isSale: prices.isSale,
     lastCheckedAt: now,
+    priceHistory,
     source: 'official Silpo product page',
     storeSpecificAvailability: 'not_verified_by_public_product_page',
   };
