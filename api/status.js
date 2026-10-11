@@ -15,11 +15,6 @@ export default async function handler(_request, response) {
   response.status(200).json({
     service: 'ShrimpWatch',
     status: priceState?.lastCheckedAt ? 'monitoring-data-available' : 'waiting-for-first-check',
-    store: {
-      name: 'Сільпо',
-      address: 'Фонтанська дорога, 58, Одеса',
-      mapsUrl: 'https://maps.app.goo.gl/njf9mi7c1E47czieA'
-    },
     product: {
       name: 'Креветка королівська, сира, дефростована, 40/60',
       unit: '100 г',
@@ -37,7 +32,7 @@ export default async function handler(_request, response) {
       scheduledBy: 'GitHub Actions',
       frequency: 'Every 6 hours',
       configured: Boolean(priceState?.lastCheckedAt),
-      note: 'The public product page does not confirm stock in the selected physical store.'
+      note: 'The public product page does not confirm store-specific stock.'
     },
     email: {
       configurationLocation: 'GitHub Actions repository secrets',
