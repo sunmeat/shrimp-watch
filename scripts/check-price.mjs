@@ -85,7 +85,6 @@ async function main() {
   const state = {
     product: productName,
     productUrl,
-    store: 'Сільпо, Фонтанська дорога, 58, Одеса',
     currentPrice: prices.currentPrice,
     regularPrice: prices.regularPrice,
     isSale: prices.isSale,
@@ -108,7 +107,7 @@ async function main() {
       previousLine.trim(),
       `Страница товара: ${productUrl}`,
       '',
-      'Важно: цена взята с публичной страницы Сільпо. Наличие именно в магазине на Фонтанской дороге, 58 отдельно не подтверждено.',
+      'Важно: цена взята с публичной страницы товара. Наличие в конкретном магазине не подтверждено.',
       `Проверено: ${now}`,
     ].filter(Boolean).join('\n');
     await sendEmail('ShrimpWatch: цена на креветки изменилась', body);
