@@ -40,8 +40,8 @@ export default async function handler(_request, response) {
       note: 'The public product page does not confirm stock in the selected physical store.'
     },
     email: {
-      configuredInGitHubActions: Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.ALERT_EMAIL),
-      note: 'Email credentials are configured as GitHub Actions secrets, not in this frontend.'
+      configurationLocation: 'GitHub Actions repository secrets',
+      note: 'The website cannot determine whether repository secrets are set. Configure SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS and ALERT_EMAIL in repository Actions secrets.'
     }
   });
 }
