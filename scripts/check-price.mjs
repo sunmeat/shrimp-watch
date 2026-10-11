@@ -72,7 +72,7 @@ async function main() {
     },
     signal: AbortSignal.timeout(20000),
   });
-  if (!response.ok) throw new Error(\`Silpo product page returned HTTP ${response.status}\`);
+  if (!response.ok) throw new Error(`Silpo product page returned HTTP ${response.status}`);
 
   const prices = extractPrices(await response.text());
   const previous = await readPreviousState();
@@ -93,23 +93,23 @@ async function main() {
     source: 'official Silpo product page',
     storeSpecificAvailability: 'not_verified_by_public_product_page',
   };
-  await writeFile(statePath, \`${JSON.stringify(state, null, 2)}\n\`);
+  await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
   console.log(JSON.stringify({ ...state, previousPrice: previous?.currentPrice ?? null, shouldAlert }, null, 2));
 
   if (shouldAlert) {
-    const previousLine = previousPrice > 0 ? \`Предыдущая цена: ${previousPrice} грн / 100 г.\n\` : '';
-    const regularLine = prices.regularPrice ? \`Обычная цена на странице: ${prices.regularPrice} грн / 100 г.\n\` : '';
+    const previousLine = previousPrice > 0 ? `Предыдущая цена: ${previousPrice} грн / 100 г.\n` : '';
+    const regularLine = prices.regularPrice ? `Обычная цена на странице: ${prices.regularPrice} грн / 100 г.\n` : '';
     const body = [
       'ShrimpWatch обнаружил изменение цены на креветки!',
       '',
       productName,
-      \`Текущая цена: ${prices.currentPrice} грн / 100 г.\`,
+      `Текущая цена: ${prices.currentPrice} грн / 100 г.`,
       regularLine.trim(),
       previousLine.trim(),
-      \`Страница товара: ${productUrl}\`,
+      `Страница товара: ${productUrl}`,
       '',
       'Важно: цена взята с публичной страницы Сільпо. Наличие именно в магазине на Фонтанской дороге, 58 отдельно не подтверждено.',
-      \`Проверено: ${now}\`,
+      `Проверено: ${now}`,
     ].filter(Boolean).join('\n');
     await sendEmail('ShrimpWatch: цена на креветки изменилась', body);
   }
