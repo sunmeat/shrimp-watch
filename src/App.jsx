@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee } from 'lucide-react';
+import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, TrendingUp, ChefHat } from 'lucide-react';
+import { SHRIMP_FACTS, SHRIMP_RECIPES } from './shrimp-content.js';
 
 const PRODUCT = 'Королевская креветка сырая, дефростированная, 40/60';
 const SONYA_WISHES = [
@@ -33,6 +34,8 @@ export default function App() {
   const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState(null);
   const [wishIndex, setWishIndex] = useState(() => Math.floor(Math.random() * SONYA_WISHES.length));
+  const [factIndex, setFactIndex] = useState(() => Math.floor(Math.random() * SHRIMP_FACTS.length));
+  const [recipeIndex, setRecipeIndex] = useState(0);
   const audioRef = useRef(null);
   const saleRef = useRef(false);
 
@@ -85,7 +88,17 @@ export default function App() {
 
   const latest = status?.latestCheck;
   const isSale = Boolean(latest?.isSale);
-  const currentPrice = latest?.priceUah;
+  const currentPrice = latest?.checkedAt ? latest?.priceUah : null;
+  const priceHistory = (status?.priceHistory ?? []).filter(point => Number.isFinite(point.priceUah) && point.priceUah > 0);
+  const historyWindow = priceHistory.slice(-14);
+  const historyStart = historyWindow[0]?.priceUah;
+  const priceIndex = historyWindow.length >= 2 && historyStart > 0 ? (historyWindow[historyWindow.length - 1].priceUah / historyStart) * 100 : null;
+  const historyMin = historyWindow.length ? Math.min(...historyWindow.map(point => point.priceUah)) : null;
+  const historyMax = historyWindow.length ? Math.max(...historyWindow.map(point => point.priceUah)) : null;
+  const regularPrice = latest?.regularPriceUah;
+  const discountPercent = currentPrice != null && regularPrice > currentPrice ? Math.round((1 - currentPrice / regularPrice) * 100) : null;
+  const fact = SHRIMP_FACTS[factIndex];
+  const recipe = SHRIMP_RECIPES[recipeIndex];
   const checkedAt = latest?.checkedAt ? new Date(latest.checkedAt).toLocaleString('ru-RU') : null;
 
   return <main className="shell odessa-shell">
@@ -148,22 +161,84 @@ export default function App() {
       <div className="facts-top">
         <div>
           <div className="eyebrow"><Sparkles size={15}/> МОРСКИЕ БАЙКИ, КОТОРЫЕ ПРАВДА</div>
-          <h2>Креветки. Маленькие, а понтов на целый океан.</h2>
-          <p>Тётя Соня собрала самое интересное. Читай, удивляйся и блесни знаниями за ужином.</p>
+          <h2>100 фактов о креветках. И ни одного про скуку.</h2>
+          <p>Биология, подводная жизнь, виды, еда и хитрости покупки. Один клик, и Соня достаёт новую историю.</p>
         </div>
-        <span className="facts-count">8 ФАКТОВ · 0 ВОДЫ</span>
+        <span className="facts-count">ФАКТ {factIndex + 1} / {SHRIMP_FACTS.length}</span>
       </div>
-      <div className="facts-grid">
-        <article className="fact-card"><span>👀</span><b>Глаза на стебельках</b><p>У многих креветок глаза расположены на подвижных стебельках. У некоторых видов зрение помогает замечать движение и ориентироваться в сложном подводном мире.</p></article>
-        <article className="fact-card"><span>🦐</span><b>Панцирь не навсегда</b><p>Креветка растёт и периодически линяет: сбрасывает старый наружный скелет, а затем формирует новый. После линьки она особенно уязвима.</p></article>
-        <article className="fact-card"><span>💓</span><b>Сердце не там, где ждёшь</b><p>Сердце креветки находится в головогруди, ближе к спинной стороне. Кровеносная система у неё открытая, не такая, как у человека.</p></article>
-        <article className="fact-card"><span>🌊</span><b>Не все живут в море</b><p>Есть пресноводные креветки, морские и солоноватоводные. Они встречаются от мелких ручьёв и мангровых зарослей до больших океанских глубин.</p></article>
-        <article className="fact-card"><span>🧹</span><b>Подводные уборщики</b><p>Многие виды питаются органическими остатками и мелкими организмами. Так они участвуют в переработке веществ и пищевых цепях водоёмов.</p></article>
-        <article className="fact-card"><span>🤝</span><b>Есть креветки-помощники</b><p>Некоторые чистящие креветки удаляют паразитов и отмершие ткани с рыб. Рыбы приходят к ним на специальные «станции чистки».</p></article>
-        <article className="fact-card"><span>🔊</span><b>Могут щёлкать громче, чем кажется</b><p>Креветки-щелкуны резко захлопывают увеличенную клешню и создают мощный щелчок с кавитационным пузырьком. Это помогает им охотиться и защищаться.</p></article>
-        <article className="fact-card"><span>📏</span><b>40/60 это не размер в сантиметрах</b><p>В торговой маркировке 40/60 обычно означает ориентировочное количество креветок на килограмм. Чем меньше число, тем крупнее креветки. Точная трактовка может зависеть от стандарта продавца.</p></article>
+      <article className="fact-feature" aria-live="polite">
+        <div className="fact-feature-icon">{fact.emoji}</div>
+        <div className="fact-feature-copy">
+          <span className="fact-category">{fact.category}</span>
+          <h3>{fact.title}</h3>
+          <p>{fact.text}</p>
+        </div>
+      </article>
+      <div className="facts-actions">
+        <button className="btn sonya-btn" type="button" onClick={() => setFactIndex(index => (index + 1) % SHRIMP_FACTS.length)}><Sparkles size={17}/> Ещё факт! <ChevronRight size={17}/></button>
+        <span>Нажимай сколько угодно: все {SHRIMP_FACTS.length} фактов ходят по кругу.</span>
       </div>
-      <div className="facts-foot">Маленькая ремарка от Сони: креветки бывают очень разными, так что не каждый факт подходит каждому виду. Наука, золотце, любит точность! 🧠</div>
+      <div className="facts-foot">Факты относятся к разным видам креветок, поэтому формулировки уточняют, когда свойство характерно не для всех. Наука, золотце, любит точность! 🧠</div>
+    </section>
+
+    <section className="index-section" id="index">
+      <div className="index-heading">
+        <div>
+          <div className="eyebrow"><TrendingUp size={15}/> КРЕВЕТОЧНАЯ БИРЖА</div>
+          <h2>Креветочный индекс</h2>
+          <p>Смотрим, как меняется цена королевской креветки. Никаких гаданий на панцире.</p>
+        </div>
+        <span className="index-stamp">100 г · ₴</span>
+      </div>
+      <div className="index-metrics">
+        <div className="index-metric"><small>ТЕКУЩАЯ ЦЕНА</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₴' : 'Ожидаем замер'}</strong><span>за 100 г</span></div>
+        <div className="index-metric"><small>ЗА КИЛОГРАММ</small><strong>{currentPrice != null ? (currentPrice * 10).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₴' : 'Пока нет данных'}</strong><span>пересчёт по текущей цене</span></div>
+        <div className="index-metric"><small>ИНДЕКС К БАЗОВОМУ ЗАМЕРУ</small><strong>{priceIndex != null ? priceIndex.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) : 'Собираем историю'}</strong><span>{priceIndex != null ? (priceIndex < 100 ? 'Цена снизилась от первого замера' : priceIndex > 100 ? 'Цена выросла от первого замера' : 'Цена на уровне первого замера') : 'Нужно минимум 2 проверенных замера'}</span></div>
+        {discountPercent != null && <div className="index-metric"><small>СКИДКА К ОБЫЧНОЙ ЦЕНЕ</small><strong>{discountPercent}%</strong><span>по данным страницы товара</span></div>}
+      </div>
+      <div className="chart-panel">
+        <div className="chart-title"><b>Последние замеры</b><span>{historyWindow.length ? `${historyWindow.length} точек` : 'История начнёт расти после успешных проверок'}</span></div>
+        {historyWindow.length >= 2 ? <div className="price-chart" role="img" aria-label="График последних цен на креветки">
+          {historyWindow.map((point, index) => {
+            const range = (historyMax ?? 0) - (historyMin ?? 0);
+            const height = range === 0 ? 54 : 18 + ((point.priceUah - historyMin) / range) * 72;
+            return <div className="chart-column" key={point.checkedAt + index} title={new Date(point.checkedAt).toLocaleString('ru-RU') + ': ' + point.priceUah + ' грн'}>
+              <span className="chart-value">{point.priceUah.toLocaleString('ru-RU', { maximumFractionDigits: 1 })}</span>
+              <div className="chart-bar" style={{ height: height + '%' }}/>
+              <small>{new Date(point.checkedAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })}</small>
+            </div>;
+          })}
+        </div> : <div className="chart-empty"><span>📉</span><b>Биржа собирает первые котировки</b><p>После нескольких успешных проверок здесь появится график, а индекс будет считаться от первого сохранённого замера.</p></div>}
+        <p className="chart-note">Индекс = текущая цена ÷ цена первого отображаемого замера × 100. Значение 100 означает, что цена не изменилась. История начинается с момента включения сохранения замеров.</p>
+      </div>
+    </section>
+
+    <section className="recipes-section" id="recipes">
+      <div className="index-heading">
+        <div>
+          <div className="eyebrow"><ChefHat size={15}/> КУХНЯ ТЁТИ СОНИ</div>
+          <h2>Ну шо, будем вкусно жить?</h2>
+          <p>Пять проверенных домашних идей. Выбирай рецепт, готовь и не передерживай креветочки!</p>
+        </div>
+        <span className="index-stamp">5 РЕЦЕПТОВ</span>
+      </div>
+      <div className="recipe-layout">
+        <div className="recipe-list">
+          {SHRIMP_RECIPES.map((item, index) => <button type="button" key={item.title} className={recipeIndex === index ? 'recipe-tab recipe-tab-active' : 'recipe-tab'} onClick={() => setRecipeIndex(index)}>
+            <span>{item.emoji}</span><span className="recipe-tab-copy"><b>{item.title}</b><small>{item.time} · {item.servings}</small></span><ChevronRight size={16}/>
+          </button>)}
+        </div>
+        <article className="recipe-detail" aria-live="polite">
+          <div className="recipe-hero-icon">{recipe.emoji}</div>
+          <div className="recipe-meta"><span>⏱ {recipe.time}</span><span>🍽 {recipe.servings}</span></div>
+          <h3>{recipe.title}</h3><p className="recipe-subtitle">{recipe.subtitle}</p>
+          <h4>Что понадобится</h4>
+          <ul className="ingredients">{recipe.ingredients.map(item => <li key={item}>{item}</li>)}</ul>
+          <h4>Как готовить</h4>
+          <ol className="recipe-steps">{recipe.steps.map(step => <li key={step}>{step}</li>)}</ol>
+          <div className="recipe-safety">Важно: готовь креветки до плотной, непрозрачной мякоти. Для ориентира FDA рекомендует внутреннюю температуру морепродуктов около 63 °C. Не оставляй готовое блюдо надолго при комнатной температуре.</div>
+        </article>
+      </div>
     </section>
 
     <section className="sonya-card" id="sonya">
