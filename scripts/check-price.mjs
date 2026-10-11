@@ -3,6 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 const productUrl = 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122';
 const statePath = 'data/price-state.json';
 const productName = 'Креветка королівська сира дефростована 40/60';
+const productNameVariants = ['Креветка королівська сира дефростована 40/60', 'Креветка королівська сира, дефростована 40/60', 'Креветка королівська сира дефростована 40/60 100г'];
 
 function decodeHtml(value) {
   return value
@@ -14,25 +15,30 @@ function decodeHtml(value) {
 }
 
 function extractPrices(html) {
-  const text = decodeHtml(html
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+  const clean = decodeHtml(html
+    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' ')
+    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' '));
-  const titleIndex = text.toLowerCase().indexOf(productName.toLowerCase());
-  if (titleIndex < 0) throw new Error('Could not find the expected product title in the official product page.');
+    .replace(/\\s+/g, ' '));
+  const lower = clean.toLocaleLowerCase('uk-UA');
+  const titleIndex = productNameVariants
+    .map((name) => lower.indexOf(name.toLocaleLowerCase('uk-UA')))
+    .find((index) => index >= 0);
+  const excerpt = titleIndex >= 0 ? clean.slice(titleIndex, titleIndex + 2400) : clean.slice(0, 8000);
 
-  const excerpt = text.slice(titleIndex, titleIndex + 1800);
-  const descriptionIndex = excerpt.indexOf('Опис');
-  const priceSection = descriptionIndex >= 0 ? excerpt.slice(0, descriptionIndex) : excerpt.slice(0, 500);
-  const priceMatches = [...priceSection.matchAll(/(\d{1,4}[.,]\d{2})\s*грн/gi)]
+  // Prefer product-specific JSON-LD offers when the page includes structured data.
+  const offers = [...html.matchAll(/"price"\\s*:\\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
+    .map((match) => Number(match[1].replace(',', '.')))
+    .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
+  const priceMatches = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\\s*(?:грн|₴)/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0);
 
-  if (!priceMatches.length) throw new Error('Could not extract a price. The store page may have changed.');
-  const currentPrice = priceMatches[0];
-  const regularPrice = priceMatches.find((price, index) => index > 0 && price > currentPrice) ?? null;
+  const prices = priceMatches.length ? priceMatches : offers;
+  if (!prices.length) throw new Error('Не удалось найти цену товара в HTML/JSON-LD страницы. Старое состояние цены сохранено.');
 
+  const currentPrice = prices[0];
+  const regularPrice = prices.find((price, index) => index > 0 && price > currentPrice) ?? null;
   return { currentPrice, regularPrice, isSale: regularPrice !== null && currentPrice < regularPrice };
 }
 
@@ -74,7 +80,8 @@ async function main() {
   });
   if (!response.ok) throw new Error(`Silpo product page returned HTTP ${response.status}`);
 
-  const prices = extractPrices(await response.text());
+  const html = await response.text();
+  const prices = extractPrices(html);
   const previous = await readPreviousState();
   const now = new Date().toISOString();
   const previousPrice = Number(previous?.currentPrice);
