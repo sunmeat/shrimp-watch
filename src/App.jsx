@@ -178,7 +178,7 @@ export default function App() {
         <button className="btn sonya-btn" type="button" onClick={() => setFactIndex(index => (index + 1) % SHRIMP_FACTS.length)}><Sparkles size={17}/> Ещё факт! <ChevronRight size={17}/></button>
         <span>Нажимай сколько угодно: все {SHRIMP_FACTS.length} фактов ходят по кругу.</span>
       </div>
-      <div className="facts-foot">Факты относятся к разным видам креветок, поэтому формулировки уточняют, когда свойство характерно не для всех. Наука, золотце, любит точность! 🧠</div>
+      <div className="facts-foot">Факты относятся к разным видам креветок, поэтому формулировки уточняют, когда свойство характерно не для всех. Наука, золотце, любит точность! 🧠<div className="fact-sources">Источники для проверки: <a href="https://repository.library.noaa.gov/view/noaa/36212/noaa_36212_DS1.pdf" target="_blank" rel="noreferrer">справочник NOAA по биологии креветок</a> · <a href="https://www.fda.gov/food/consumers/advice-about-eating-fish" target="_blank" rel="noreferrer">рекомендации FDA по морепродуктам</a> · <a href="https://www.fisheries.noaa.gov/insight/shrimp-recipes" target="_blank" rel="noreferrer">рецепты NOAA Fisheries</a></div></div>
     </section>
 
     <section className="index-section" id="index">
