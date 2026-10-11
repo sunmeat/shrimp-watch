@@ -16,10 +16,10 @@ function decodeHtml(value) {
 
 function extractPrices(html) {
   const clean = decodeHtml(html
-    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' ')
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\\s+/g, ' '));
+    .replace(/\s+/g, ' '));
   const lower = clean.toLocaleLowerCase('uk-UA');
   const titleIndex = productNameVariants
     .map((name) => lower.indexOf(name.toLocaleLowerCase('uk-UA')))
@@ -27,10 +27,10 @@ function extractPrices(html) {
   const excerpt = titleIndex >= 0 ? clean.slice(titleIndex, titleIndex + 2400) : clean.slice(0, 8000);
 
   // Prefer product-specific JSON-LD offers when the page includes structured data.
-  const offers = [...html.matchAll(/"price"\\s*:\\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
+  const offers = [...html.matchAll(/"price"\s*:\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
-  const priceMatches = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\\s*(?:грн|₴)/gi)]
+  const priceMatches = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\s*(?:грн|₴)/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0);
 
