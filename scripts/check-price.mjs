@@ -8,7 +8,7 @@ function decodeHtml(value) {
   return value
     .replace(/&nbsp;|&#160;/g, ' ')
     .replace(/&amp;/g, '&')
-    .replace(/&#(d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'");
 }
@@ -23,7 +23,9 @@ function extractPrices(html) {
   if (titleIndex < 0) throw new Error('Could not find the expected product title in the official product page.');
 
   const excerpt = text.slice(titleIndex, titleIndex + 1800);
-  const priceMatches = [...excerpt.matchAll(/(\d{1,4}[.,]\d{2})\s*грн/gi)]
+  const descriptionIndex = excerpt.indexOf('Опис');
+  const priceSection = descriptionIndex >= 0 ? excerpt.slice(0, descriptionIndex) : excerpt.slice(0, 500);
+  const priceMatches = [...priceSection.matchAll(/(\d{1,4}[.,]\d{2})\s*грн/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0);
 
@@ -35,7 +37,6 @@ function extractPrices(html) {
     currentPrice,
     regularPrice,
     isSale: regularPrice !== null && currentPrice < regularPrice,
-    excerpt: excerpt.slice(0, 350),
   };
 }
 
@@ -81,14 +82,15 @@ async function main() {
     },
     signal: AbortSignal.timeout(20000),
   });
-  if (!response.ok) throw new Error(`Silpo product page returned HTTP ${response.status}`);
+  if (!response.ok) throw new Error(\`Silpo product page returned HTTP \${response.status}\`);
 
   const html = await response.text();
   const prices = extractPrices(html);
   const previous = await readPreviousState();
   const now = new Date().toISOString();
 
-  const priceDropped = previous && prices.currentPrice < Number(previous.currentPrice);
+  const previousPrice = Number(previous?.currentPrice);
+  const priceDropped = previous && Number.isFinite(previousPrice) && previousPrice > 0 && prices.currentPrice < previousPrice;
   const saleStarted = prices.isSale && (!previous || !previous.isSale);
   const shouldAlert = Boolean(priceDropped || saleStarted);
 
@@ -104,25 +106,25 @@ async function main() {
     storeSpecificAvailability: 'not_verified_by_public_product_page',
   };
 
-  await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
+  await writeFile(statePath, \`\${JSON.stringify(state, null, 2)}\\n\`);
   console.log(JSON.stringify({ ...state, previousPrice: previous?.currentPrice ?? null, shouldAlert }, null, 2));
 
   if (shouldAlert) {
-    const previousLine = previous ? `Предыдущая цена: ${previous.currentPrice} грн / 100 г.\n` : '';
-    const regularLine = prices.regularPrice ? `Обычная цена на странице: ${prices.regularPrice} грн / 100 г.\n` : '';
+    const previousLine = previousPrice > 0 ? \`Предыдущая цена: \${previousPrice} грн / 100 г.\\n\` : '';
+    const regularLine = prices.regularPrice ? \`Обычная цена на странице: \${prices.regularPrice} грн / 100 г.\\n\` : '';
     const body = [
       'ShrimpWatch обнаружил изменение цены на креветки!',
       '',
       productName,
-      `Текущая цена: ${prices.currentPrice} грн / 100 г.`,
+      \`Текущая цена: \${prices.currentPrice} грн / 100 г.\`,
       regularLine.trim(),
       previousLine.trim(),
-      `Страница товара: ${productUrl}`,
+      \`Страница товара: \${productUrl}\`,
       '',
       'Важно: цена взята с публичной страницы Сільпо. Наличие именно в магазине на Фонтанской дороге, 58 отдельно не подтверждено.',
-      `Проверено: ${now}`,
-    ].filter(Boolean).join('\n');
-    await sendEmail('🦐 ShrimpWatch: цена на креветки изменилась', body);
+      \`Проверено: \${now}\`,
+    ].filter(Boolean).join('\\n');
+    await sendEmail('ShrimpWatch: цена на креветки изменилась', body);
   }
 }
 
