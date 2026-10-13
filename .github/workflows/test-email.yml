@@ -1,0 +1,69 @@
+name: ShrimpWatch test email
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send-test-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Send test email
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+        run: |
+          node --input-type=module <<'NODE'
+          import nodemailer from 'nodemailer';
+
+          const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, ALERT_EMAIL } = process.env;
+          const missing = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'ALERT_EMAIL']
+            .filter((key) => !process.env[key]);
+          if (missing.length) {
+            throw new Error(`Missing required GitHub Actions secrets: ${missing.join(', ')}`);
+          }
+
+          const port = Number(SMTP_PORT);
+          const transporter = nodemailer.createTransport({
+            host: SMTP_HOST,
+            port,
+            secure: port === 465,
+            auth: { user: SMTP_USER, pass: SMTP_PASS },
+          });
+
+          await transporter.verify();
+          await transporter.sendMail({
+            from: SMTP_FROM || SMTP_USER,
+            to: ALERT_EMAIL,
+            subject: '🦐 ShrimpWatch: тестовое письмо',
+            text: [
+              'Привет! Это тестовое письмо от креветочной разведки ShrimpWatch.',
+              '',
+              'Если ты получил это письмо, SMTP-настройки работают и письмо доставлено в твой почтовый ящик.',
+              '',
+              'Автоматическая проверка цены выполняется каждый час. Уведомление об акции придёт, когда цена опустится ниже 40 грн за 100 г.',
+              '',
+              'Креветочная разведка на связи! 🦐',
+            ].join('\n'),
+          });
+
+          console.log('SMTP verification passed and test email accepted by the mail server.');
+          console.log('Recipient:', ALERT_EMAIL);
+          NODE
