@@ -79,3 +79,41 @@
 /* Десктопная полировка: больше воздуха вокруг навигации и танцпола */
 @media(min-width:761px){.odessa-shell:before{top:132px}.odessa-shell .nav{height:104px}.odessa-shell .dance-section{margin-top:8px}.odessa-shell .dance-section .dance{cursor:pointer}.odessa-shell .dance-section .dance:focus-visible{outline:2px solid #f0c36b;outline-offset:4px}.odessa-shell .hero{padding-top:66px;padding-bottom:58px}.odessa-shell .cards{gap:20px}}
 .odessa-shell .dance-section .dance{cursor:pointer;touch-action:manipulation}.odessa-shell .dance-section .dance:focus-visible{outline:2px solid #f0c36b;outline-offset:3px}
+
+
+/* Креветочная дискотека: режим «Привоз до рассвета» */
+.dance-section .dance{isolation:isolate;perspective:900px;cursor:pointer;transition:box-shadow .3s,border-color .3s}
+.dance-section .dance:before{content:"";position:absolute;inset:-45%;z-index:0;pointer-events:none;background:conic-gradient(from 0deg,transparent 0 12%,#f0c36b20 15%,transparent 20% 38%,#c7473530 42%,transparent 48% 65%,#57d9c020 70%,transparent 78%);animation:shrimp-nebula 13s linear infinite}
+.dance-section .dance:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#f9e5b408 4px 5px);mix-blend-mode:screen;opacity:.35}
+.dance-section .orbit{z-index:1;width:240px;height:130px;border:1px solid #f0c36b45;box-shadow:0 0 28px #f0c36b0c,inset 0 0 25px #f0c36b0a;animation:shrimp-orbit 7s linear infinite}
+.dance-section .orbit.two{width:300px;height:170px;animation-direction:reverse;animation-duration:10s}
+.dance-floor{position:absolute;z-index:1;bottom:26px;left:15%;right:15%;height:34px;border-radius:50%;background:#efb95d18;filter:blur(12px);animation:floor-pulse 1.2s ease-in-out infinite}
+.disco-beam{position:absolute;z-index:1;top:-35%;height:145%;width:36%;opacity:.16;filter:blur(12px);transform-origin:top center;pointer-events:none;mix-blend-mode:screen}
+.beam-one{left:18%;background:linear-gradient(180deg,#f5d47b,transparent 78%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);animation:beam-sweep 5s ease-in-out infinite alternate}
+.beam-two{right:15%;background:linear-gradient(180deg,#ef6b53,transparent 78%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);animation:beam-sweep 6s ease-in-out infinite alternate-reverse}
+.dance-section .shrimp{z-index:3;transform-style:preserve-3d;will-change:transform,filter;filter:drop-shadow(0 12px 10px #0007);animation:shrimp-festival 1.45s cubic-bezier(.45,0,.55,1) infinite}
+.dance-section .s1{animation-delay:-.2s}.dance-section .s2{animation-delay:-.9s}.dance-section .s3{animation-delay:-.55s}.dance-section .s4{animation-delay:-1.1s}
+.dance-section .s5{font-size:48px;animation-delay:-.35s;animation-name:shrimp-sidequest}
+.dance-section .s6{font-size:43px;animation-delay:-.75s;animation-name:shrimp-sidequest;animation-direction:reverse}
+.dance-section .star{z-index:4;color:#f6d889;text-shadow:0 0 14px #f0c36b;animation:shrimp-star 2s ease-in-out infinite}
+.dance-section .star.c{top:24%;left:13%;animation-delay:-.4s}.dance-section .star.d{bottom:26%;right:13%;animation-delay:-1.1s}
+.disco-ball{position:absolute;z-index:4;top:22px;left:50%;font-size:26px;color:#ffe8a8;text-shadow:0 0 10px #f0c36b,0 0 25px #f0c36b;animation:disco-ball-spin 3s linear infinite}
+.confetti{position:absolute;z-index:4;top:-30px;font-style:normal;color:#f0c36b;font-size:19px;opacity:0;pointer-events:none}
+.confetti-a{left:18%;animation:confetti-fall 3.5s linear infinite}.confetti-b{left:39%;animation:confetti-fall 4.1s linear -1.4s infinite;color:#fff0cb}.confetti-c{right:29%;animation:confetti-fall 3.8s linear -2.2s infinite;color:#e8785f}.confetti-d{right:13%;animation:confetti-fall 4.4s linear -.7s infinite}
+.dance-section .dance.party{border-color:#f0c36b;box-shadow:0 0 0 1px #f0c36b45,0 0 38px #c7473540,inset 0 0 55px #f0c36b16}
+.dance-section .dance.party .shrimp{animation-duration:.34s;filter:drop-shadow(0 0 14px #f0c36b80) drop-shadow(0 12px 10px #0007)}
+.dance-section .dance.party .disco-beam{opacity:.48;animation-duration:.7s}
+.dance-section .dance.party .confetti{opacity:1;animation-duration:1.1s}
+.dance-section .dance.party .disco-ball{animation-duration:.45s}
+.dance-section .dance.party .dance-floor{animation-duration:.25s;background:#f0c36b35}
+@keyframes shrimp-festival{0%,100%{transform:translate3d(0,7px,0) rotate(-17deg) scale(1)}18%{transform:translate3d(-8px,-16px,12px) rotate(18deg) scale(1.13)}38%{transform:translate3d(5px,3px,-12px) rotate(175deg) scale(.95)}62%{transform:translate3d(9px,-21px,8px) rotate(205deg) scale(1.16)}82%{transform:translate3d(-3px,-3px,0) rotate(330deg) scale(1.02)}}
+@keyframes shrimp-sidequest{0%,100%{transform:translateY(0) rotate(-25deg) scale(.9)}30%{transform:translateY(-32px) rotate(35deg) scale(1.15)}60%{transform:translateY(4px) rotate(160deg) scale(.85)}80%{transform:translateY(-18px) rotate(250deg) scale(1.05)}}
+@keyframes shrimp-nebula{to{transform:rotate(360deg)}}
+@keyframes shrimp-orbit{0%{transform:rotate(-23deg) scale(.9)}50%{transform:rotate(157deg) scale(1.08)}100%{transform:rotate(337deg) scale(.9)}}
+@keyframes beam-sweep{from{transform:rotate(-28deg) translateX(-10%)}to{transform:rotate(32deg) translateX(18%)}}
+@keyframes floor-pulse{0%,100%{transform:scaleX(.8);opacity:.35}50%{transform:scaleX(1.15);opacity:.9}}
+@keyframes disco-ball-spin{0%{transform:translateX(-50%) rotate(0) scale(1)}50%{transform:translateX(-50%) rotate(180deg) scale(1.35)}100%{transform:translateX(-50%) rotate(360deg) scale(1)}}
+@keyframes shrimp-star{0%,100%{opacity:.25;transform:scale(.5) rotate(0)}50%{opacity:1;transform:scale(1.5) rotate(90deg)}}
+@keyframes confetti-fall{0%{transform:translate3d(0,-15px,0) rotate(0);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translate3d(25px,310px,0) rotate(720deg);opacity:0}}
+@media(max-width:760px){.dance-section .s5{font-size:38px}.dance-section .s6{font-size:34px}.disco-ball{top:15px}.dance-section .orbit.two{width:240px;height:140px}}
+@media(prefers-reduced-motion:reduce){.dance-section .dance:before,.dance-section .orbit,.dance-section .shrimp,.dance-section .star,.disco-ball,.disco-beam,.confetti,.dance-floor{animation-duration:8s!important}}
