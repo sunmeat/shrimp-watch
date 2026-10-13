@@ -5,7 +5,6 @@
 
 .odessa-shell{position:relative}.odessa-ribbon{margin:0 -34px;padding:9px 34px;background:#c74735;color:#fff3d9;text-align:center;font:10px 'DM Mono',monospace;letter-spacing:.16em;border-bottom:3px solid #e9b85c}.odessa-shell:before{content:"";position:absolute;top:94px;left:0;right:0;height:3px;background:linear-gradient(90deg,#c74735 0 22%,#f0c36b 22% 25%,#0f3c43 25% 75%,#f0c36b 75% 78%,#c74735 78%)}.odessa-shell .hero h1 em{color:#efb95d}.odessa-shell .eyebrow{color:#f0c36b}.odessa-shell .mint{background:#c74735;color:#fff7e9}.odessa-shell .live{color:#f0c36b;border-color:#c7473580}.odessa-shell .live i{background:#edba5e;box-shadow:0 0 10px #edba5e}.odessa-shell .brand b span{color:#efb95d}.odessa-shell .dance-section{background:linear-gradient(135deg,rgba(141,49,40,.17),rgba(10,34,40,.72));border-color:#c7473550}.odessa-shell .dance{background:radial-gradient(ellipse at center,rgba(199,71,53,.22),transparent 65%),linear-gradient(145deg,#143d42,#0b242b);border-color:#d59e5b45}.odessa-shell .orbit{border-color:#f0c36b35}.odessa-shell .sale-active{color:#fff0cb;border-color:#e5a64d;background:#8b3a2d66}.odessa-shell .tag{color:#f0c36b;border-color:#f0c36b66}.sonya-hero{position:relative;overflow:hidden;background:linear-gradient(145deg,#5b2c28,#173c40)!important;border-color:#d6a75c55!important}.sonya-portrait{font-size:54px;margin-bottom:16px;filter:drop-shadow(0 8px 12px #0005)}.sonya-sign{display:block;margin-top:20px;color:#f2c778;font-size:12px;font-style:italic}.sonya-card{position:relative;display:grid;grid-template-columns:100px 1fr auto;align-items:center;gap:25px;margin:20px 0;padding:34px;border:1px solid #d6a75c55;border-radius:16px;background:radial-gradient(ellipse at 0% 0%,#74362f88,transparent 50%),linear-gradient(125deg,#173b3e,#0d292f);overflow:hidden}.sonya-big{font-size:76px;filter:drop-shadow(0 8px 12px #0005)}.sonya-copy h2{font-size:clamp(22px,3vw,31px);letter-spacing:-.04em;margin:13px 0}.sonya-wish{font-size:15px;line-height:1.9;color:#f1e4ce;max-width:670px}.sonya-btn{margin-top:12px;background:#edbd66;color:#482720}.sonya-stamp{width:94px;height:94px;border:2px solid #dba957;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;color:#edbd66;font:10px 'DM Mono',monospace;line-height:1.5;transform:rotate(12deg)}.price-hint{margin-top:14px!important;padding:10px 12px;border-left:2px solid #d8a75e;background:#c7473515;color:#cbb9a2!important}.odessa-shell .hero-note h2{color:#f7dfb3}.odessa-shell .steps b{color:#f0c36b}.odessa-shell footer{border-color:#c7473544}.odessa-shell footer>b{color:#f0c36b}@media(max-width:760px){.odessa-ribbon{margin:0 -18px;padding:9px 12px;font-size:8px;letter-spacing:.08em}.odessa-shell:before{display:none}.sonya-card{grid-template-columns:62px 1fr;padding:22px;gap:15px}.sonya-big{font-size:48px}.sonya-stamp{display:none}.sonya-wish{font-size:13px}.sonya-copy h2{font-size:23px}.sonya-btn{font-size:11px}}
 
-/* Энциклопедия креветочного счастья */
 .facts-section{margin:24px 0;padding:32px;border:1px solid #d6a75c45;border-radius:16px;background:linear-gradient(145deg,rgba(23,59,62,.82),rgba(10,31,37,.88))}
 .facts-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:24px}
 .facts-top h2{font-size:clamp(25px,3.6vw,36px);line-height:1.15;letter-spacing:-.05em;max-width:690px;margin:14px 0 10px}
@@ -21,7 +20,6 @@
 @media(max-width:900px){.facts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.facts-section{padding:24px}}
 @media(max-width:560px){.facts-top{flex-direction:column;gap:15px}.facts-grid{grid-template-columns:1fr}.fact-card{min-height:0;padding:18px}.facts-section{padding:19px}.facts-top h2{font-size:27px}}
 
-/* 100 фактов, креветочный индекс и домашняя кухня */
 .fact-feature{display:grid;grid-template-columns:112px 1fr;align-items:center;gap:24px;min-height:230px;padding:30px;border:1px solid #d6a75c70;border-radius:14px;background:radial-gradient(ellipse at 0 0,#c7473520,transparent 55%),#071b22a8}
 .fact-feature-icon{display:grid;place-items:center;width:100px;height:100px;border-radius:24px;background:#c7473520;border:1px solid #d6a75c50;font-size:56px}
 .fact-category{display:inline-flex;padding:6px 9px;border:1px solid #d6a75c66;border-radius:99px;color:#efc36f;font:10px 'DM Mono',monospace;letter-spacing:.08em}
@@ -76,12 +74,10 @@
 .fact-sources{margin-top:10px;font-size:10px;line-height:1.8;color:#91aaa9}.fact-sources a{color:#efc36f;text-decoration:underline;text-underline-offset:3px}
 
 
-/* Десктопная полировка: больше воздуха вокруг навигации и танцпола */
 @media(min-width:761px){.odessa-shell:before{top:132px}.odessa-shell .nav{height:104px}.odessa-shell .dance-section{margin-top:8px}.odessa-shell .dance-section .dance{cursor:pointer}.odessa-shell .dance-section .dance:focus-visible{outline:2px solid #f0c36b;outline-offset:4px}.odessa-shell .hero{padding-top:66px;padding-bottom:58px}.odessa-shell .cards{gap:20px}}
 .odessa-shell .dance-section .dance{cursor:pointer;touch-action:manipulation}.odessa-shell .dance-section .dance:focus-visible{outline:2px solid #f0c36b;outline-offset:3px}
 
 
-/* Креветочная дискотека: режим «Привоз до рассвета» */
 .dance-section .dance{isolation:isolate;perspective:900px;cursor:pointer;transition:box-shadow .3s,border-color .3s}
 .dance-section .dance:before{content:"";position:absolute;inset:-45%;z-index:0;pointer-events:none;background:conic-gradient(from 0deg,transparent 0 12%,#f0c36b20 15%,transparent 20% 38%,#c7473530 42%,transparent 48% 65%,#57d9c020 70%,transparent 78%);animation:shrimp-nebula 13s linear infinite}
 .dance-section .dance:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#f9e5b408 4px 5px);mix-blend-mode:screen;opacity:.35}
@@ -119,7 +115,6 @@
 @media(prefers-reduced-motion:reduce){.dance-section .dance:before,.dance-section .orbit,.dance-section .shrimp,.dance-section .star,.disco-ball,.disco-beam,.confetti,.dance-floor{animation-duration:8s!important}}
 
 
-/* Креветочное настроение: гороскоп, мини-тест и карточки для шаринга */
 .mood-section{margin:24px 0;padding:32px;border:1px solid #d6a75c55;border-radius:16px;background:radial-gradient(ellipse at 100% 0,#c7473518,transparent 40%),linear-gradient(145deg,rgba(23,59,62,.88),rgba(10,31,37,.94))}
 .mood-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;margin-bottom:25px}
 .mood-heading h2{font-size:clamp(29px,4vw,40px);letter-spacing:-.06em;margin:13px 0 9px}
@@ -167,7 +162,6 @@
 .mood-knowledge-review p{margin:6px 0 0;color:#a8bcbb;font-size:10px;line-height:1.7}
 
 
-/* Результат теста: аккуратная карточка без расползающейся сетки */
 .mood-personality-result{
   display:grid;
   grid-template-columns:88px minmax(0,1fr);
