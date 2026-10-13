@@ -37,6 +37,7 @@ function squeak(context) {
 export default function App() {
   const [status, setStatus] = useState(null);
   const [wishIndex, setWishIndex] = useState(() => Math.floor(Math.random() * SONYA_WISHES.length));
+  const [danceParty, setDanceParty] = useState(false);
   const [factIndex, setFactIndex] = useState(() => Math.floor(Math.random() * SHRIMP_FACTS.length));
   const [recipeIndex, setRecipeIndex] = useState(0);
   const audioRef = useRef(null);
@@ -88,6 +89,12 @@ export default function App() {
     const timer = window.setInterval(() => setWishIndex((index) => (index + 1) % SONYA_WISHES.length), 12000);
     return () => window.clearInterval(timer);
   }, []);
+
+  const triggerDance = () => {
+    playDanceSqueak();
+    setDanceParty(true);
+    window.setTimeout(() => setDanceParty(false), 2200);
+  };
 
   const playDanceSqueak = () => {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -145,10 +152,10 @@ export default function App() {
         <div><div className="eyebrow"><Waves size={15}/> ПРИВОЗ НЕ СПИТ</div><h2>Танцуют, как на свадьбе у племянницы.</h2></div>
         <span className={isSale ? 'sale-pill sale-active' : 'sale-pill'}><i/>{isSale ? 'АКЦИЯ! ПИ-ПИ-ПИ!' : 'ПОКА ТАНЦУЕМ ДЛЯ ДУШИ'}</span>
       </div>
-      <div className="dance" role="button" tabIndex={0} aria-label="Нажми, чтобы креветки пищали" onClick={playDanceSqueak} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); playDanceSqueak(); } }}>
-        <div className="orbit one"/><div className="orbit two"/>
+      <div className={`dance${danceParty ? ' party' : ''}`} role="button" tabIndex={0} aria-label="Нажми, чтобы устроить креветочную дискотеку" onClick={triggerDance} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); triggerDance(); } }}>
+        <div className="disco-beam beam-one"/><div className="disco-beam beam-two"/><div className="orbit one"/><div className="orbit two"/><div className="dance-floor"/>
         <span className="shrimp s1">🦐</span><span className="shrimp s2">🦐</span><span className="shrimp s3">🦐</span>
-        <span className="shrimp s4">🦐</span><i className="star a">✦</i><i className="star b">✧</i>
+        <span className="shrimp s4">🦐</span><span className="shrimp s5">🦐</span><span className="shrimp s6">🦐</span><i className="star a">✦</i><i className="star b">✧</i><i className="star c">✺</i><i className="star d">✧</i><i className="confetti confetti-a">✦</i><i className="confetti confetti-b">✧</i><i className="confetti confetti-c">✷</i><i className="confetti confetti-d">✦</i><span className="disco-ball">✺</span>
         <div className="caption">♫ НЕ ТАНЦУЕТ ТОЛЬКО ТОТ, КТО НЕ СЛЫШИТ МУЗЫКУ</div>
       </div>
       <p className="sound-note">При обнаружении акции креветки пищат. На телефоне сначала коснись экрана, чтобы разрешить звук. Ну шо, поехали!</p>
