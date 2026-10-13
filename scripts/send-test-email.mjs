@@ -15,7 +15,6 @@ const transporter = nodemailer.createTransport({
 });
 await transporter.verify();
 
-// Sample values only: same shared template as a real alert, without changing price-monitor state.
 const email = buildDiscountEmail({
   productName: 'Креветка королівська сира дефростована 40/60',
   productUrl: 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122',
