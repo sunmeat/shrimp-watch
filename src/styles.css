@@ -117,3 +117,45 @@
 @keyframes confetti-fall{0%{transform:translate3d(0,-15px,0) rotate(0);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translate3d(25px,310px,0) rotate(720deg);opacity:0}}
 @media(max-width:760px){.dance-section .s5{font-size:38px}.dance-section .s6{font-size:34px}.disco-ball{top:15px}.dance-section .orbit.two{width:240px;height:140px}}
 @media(prefers-reduced-motion:reduce){.dance-section .dance:before,.dance-section .orbit,.dance-section .shrimp,.dance-section .star,.disco-ball,.disco-beam,.confetti,.dance-floor{animation-duration:8s!important}}
+
+
+/* Креветочное настроение: гороскоп, мини-тест и карточки для шаринга */
+.mood-section{margin:24px 0;padding:32px;border:1px solid #d6a75c55;border-radius:16px;background:radial-gradient(ellipse at 100% 0,#c7473518,transparent 40%),linear-gradient(145deg,rgba(23,59,62,.88),rgba(10,31,37,.94))}
+.mood-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;margin-bottom:25px}
+.mood-heading h2{font-size:clamp(29px,4vw,40px);letter-spacing:-.06em;margin:13px 0 9px}
+.mood-heading p{max-width:720px;font-size:13px;line-height:1.85;color:#a8bcbb;margin:0}
+.mood-seal{flex-shrink:0;width:92px;height:92px;border:1px solid #d6a75c77;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#f0c36b;font-size:28px;transform:rotate(7deg);background:#071b2277}
+.mood-seal small{font:8px 'DM Mono',monospace;line-height:1.5;text-align:center;letter-spacing:.1em}
+.mood-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.mood-tab{display:inline-flex;align-items:center;gap:8px;padding:11px 13px;border:1px solid var(--line);border-radius:9px;background:#071b2280;color:#9bb3b0;font-size:11px;font-weight:700;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.mood-tab:hover,.mood-tab.active{background:#c7473528;border-color:#d6a75c99;color:#f3d9a4}
+.mood-feature,.mood-prediction,.mood-result{display:grid;grid-template-columns:100px minmax(0,1fr);gap:22px;align-items:center;padding:27px;border:1px solid #d6a75c66;border-radius:13px;background:radial-gradient(ellipse at 0 0,#c7473525,transparent 60%),#071b2290}
+.mood-emoji{display:grid;place-items:center;width:88px;height:88px;border:1px solid #d6a75c55;border-radius:23px;background:#c7473522;font-size:49px}
+.mood-copy h3,.mood-result h3{font-size:clamp(24px,3vw,34px);letter-spacing:-.05em;color:#f3d9a4;margin:10px 0}
+.mood-kicker{font:9px 'DM Mono',monospace;letter-spacing:.12em;color:#efc36f}
+.mood-copy>p,.mood-result>p{font-size:13px;line-height:1.8;color:#b4c8c2;margin:0}
+.mood-section blockquote{margin:15px 0 0;padding:12px 15px;border-left:2px solid #c74735;background:#c7473515;color:#e9d7b8;font-size:12px;line-height:1.8}
+.mood-quiz{padding:23px;border:1px solid var(--line);border-radius:13px;background:#071b2270}
+.mood-progress{display:flex;align-items:center;gap:15px;margin-bottom:23px}
+.mood-progress>span{white-space:nowrap;color:#efc36f;font:9px 'DM Mono',monospace;letter-spacing:.08em}
+.mood-progress>div{height:5px;flex:1;border-radius:99px;background:#244146;overflow:hidden}
+.mood-progress i{display:block;height:100%;background:#d6a75c;border-radius:99px;transition:width .25s}
+.mood-question{border:0;border-top:1px solid var(--line);padding:19px 0 0;margin:0 0 18px;min-width:0}
+.mood-question legend{padding:0 0 12px;color:#f1dfc2;font-size:13px;font-weight:800}
+.mood-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mood-option{padding:12px;border:1px solid var(--line);border-radius:9px;background:#102c33;color:#a8bcbb;text-align:left;font-size:11px;line-height:1.6;cursor:pointer;transition:border-color .2s,background .2s}
+.mood-option:hover,.mood-option.selected{border-color:#d6a75c;background:#c7473526;color:#f3d9a4}
+.mood-quiz-actions,.mood-result-actions,.mood-prediction-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:19px}
+.mood-quiz-actions>span{flex:1;font-size:10px;line-height:1.6;color:#91aaa9}
+.mood-quiz-actions .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.mood-result{grid-template-columns:90px minmax(0,1fr)}
+.mood-result>b{display:block;color:#efc36f;font-size:12px;margin-bottom:8px}
+.mood-prediction{grid-template-columns:90px minmax(0,1fr)}
+.mood-prediction>p{font-size:clamp(16px,2vw,21px);line-height:1.8;color:#f1dfc2;margin:0}
+.mood-prediction .mood-emoji{grid-row:span 2}
+.mood-prediction-actions{grid-column:2}
+.mood-footer{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;color:#91aaa9;font-size:10px}
+.mood-share-link{display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;color:#efc36f;font-size:10px;cursor:pointer;padding:7px 0}
+.mood-share-link:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:760px){.mood-section{padding:21px}.mood-heading{gap:12px}.mood-seal{width:68px;height:68px;font-size:21px}.mood-seal small{font-size:7px}.mood-feature,.mood-prediction,.mood-result{grid-template-columns:1fr;padding:20px;gap:14px}.mood-emoji{width:70px;height:70px;font-size:39px;border-radius:18px}.mood-prediction .mood-emoji{grid-row:auto}.mood-prediction-actions{grid-column:1}.mood-options{grid-template-columns:1fr}.mood-quiz{padding:17px}.mood-tab{font-size:10px;padding:10px}.mood-heading h2{font-size:29px}}
+@media(prefers-reduced-motion:reduce){.mood-tab,.mood-option,.mood-progress i{transition:none}}
