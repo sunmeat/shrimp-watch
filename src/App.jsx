@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, ChefHat } from 'lucide-react';
+import { Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, ChefHat } from 'lucide-react';
 import { SHRIMP_FACTS, SHRIMP_RECIPES } from './shrimp-content.js';
 
 const PRODUCT = 'Королевская креветка сырая, дефростированная, 40/60';
@@ -30,8 +30,6 @@ function squeak(context) {
 }
 
 export default function App() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState(null);
   const [wishIndex, setWishIndex] = useState(() => Math.floor(Math.random() * SONYA_WISHES.length));
   const [factIndex, setFactIndex] = useState(() => Math.floor(Math.random() * SHRIMP_FACTS.length));
@@ -123,7 +121,7 @@ export default function App() {
     <section className="hero">
       <div>
         <div className="eyebrow"><Sparkles size={15}/> ПРИВЕТ, ДУША МОЯ!</div>
-        <h1>Море рядом.<br/><em>Креветки по уму.</em></h1>
+        <h1>Полюбить — так королевские.<br/><em>Покупать — когда выгодно.</em></h1>
         <p className="lead">У нас всё по-одесски: без паники, с разговором, с хорошим настроением и чтоб покупка была выгодная, а не «мама, шо это было?».</p>
         <div className="actions"><a className="btn mint" href="#price"><Fish size={17}/> Ну-ка, покажи цену</a><a className="btn dark" href="#sonya"><Heart size={16}/> К тёте Соне</a></div>
         <div className="fine"><span>✓ Без лишней суеты</span><span>✳ Проверяем цену каждые 6 часов</span></div>
@@ -230,16 +228,6 @@ export default function App() {
         <button className="btn sonya-btn" type="button" onClick={() => setWishIndex((index) => (index + 1 + Math.floor(Math.random() * (SONYA_WISHES.length - 1))) % SONYA_WISHES.length)}><Coffee size={17}/> Сонечка, ещё пожелание!</button>
       </div>
       <div className="sonya-stamp">ОДЕССА<br/>МАМА<br/>♥</div>
-    </section>
-
-    <section className="alerts" id="alerts">
-      <div><div className="eyebrow"><Mail size={15}/> ПИСЬМО С ПРИВОЗА</div><h2>Пусть скидка<br/>сама тебя найдёт.</h2><p>Форма пока демонстрационная: адрес не отправляется и не сохраняется. Не обещаем писем, пока не подключена отправка.</p></div>
-      <form onSubmit={e => {e.preventDefault();setSubmitted(true)}}>
-        <label htmlFor="email">ТВОЙ EMAIL</label>
-        <div className="input"><Mail size={17}/><input id="email" type="email" placeholder="you@example.com" value={email} onChange={e=>{setEmail(e.target.value);setSubmitted(false)}} required/></div>
-        <button className="btn mint full" type="submit">{submitted ? <><CircleCheck size={17}/> Это пока демо, золотце</> : <><Bell size={17}/> Хочу знать о скидке</>}</button>
-        <small className="note">Никакие введённые данные не сохраняются.</small>
-      </form>
     </section>
 
     <section className="steps">
