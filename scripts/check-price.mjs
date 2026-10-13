@@ -88,7 +88,8 @@ async function main() {
   const previousPrice = Number(previous?.currentPrice);
   const belowThreshold = prices.currentPrice < alertPriceThreshold;
   const wasBelowThreshold = Number.isFinite(previousPrice) && previousPrice > 0 && previousPrice < alertPriceThreshold;
-  const shouldAlert = belowThreshold && (!previous || !wasBelowThreshold);
+  // Retry on the next hourly run if an alert was needed but email delivery was not configured or failed.
+  const shouldAlert = belowThreshold && (!wasBelowThreshold || previous?.alertEmailSent !== true);
 
   const previousHistory = Array.isArray(previous?.priceHistory) ? previous.priceHistory : [];
   const priceHistory = [
@@ -104,6 +105,7 @@ async function main() {
     isSale: prices.isSale,
     alertPriceThreshold,
     belowThreshold,
+    alertEmailSent: belowThreshold && wasBelowThreshold ? previous?.alertEmailSent === true : false,
     lastCheckedAt: now,
     priceHistory,
     source: 'official Silpo product page',
@@ -125,7 +127,8 @@ async function main() {
       'Важно: цена взята с публичной страницы товара. Наличие в конкретном магазине не подтверждено.',
       `Проверено: ${now}`,
     ].filter(Boolean).join('\n');
-    await sendEmail('ShrimpWatch: креветки дешевле 40 грн!', body);
+    state.alertEmailSent = await sendEmail('ShrimpWatch: креветки дешевле 40 грн!', body);
+    await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
   }
 }
 
