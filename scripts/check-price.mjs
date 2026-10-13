@@ -28,7 +28,6 @@ function extractPrices(html) {
     .find((index) => index >= 0);
   const excerpt = titleIndex >= 0 ? clean.slice(titleIndex, titleIndex + 2400) : clean.slice(0, 8000);
 
-  // Prefer product-specific JSON-LD offers when the page includes structured data.
   const offers = [...html.matchAll(/"price"\s*:\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
@@ -89,7 +88,6 @@ async function main() {
   const previousPrice = Number(previous?.currentPrice);
   const belowThreshold = prices.currentPrice < alertPriceThreshold;
   const wasBelowThreshold = Number.isFinite(previousPrice) && previousPrice > 0 && previousPrice < alertPriceThreshold;
-  // Retry on the next hourly run if an alert was needed but email delivery was not configured or failed.
   const shouldAlert = belowThreshold && (!wasBelowThreshold || previous?.alertEmailSent !== true);
 
   const previousHistory = Array.isArray(previous?.priceHistory) ? previous.priceHistory : [];
