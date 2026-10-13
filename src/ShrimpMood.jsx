@@ -128,8 +128,9 @@ export default function ShrimpMood() {
           <div className="mood-options">{item.answers.map(answer => <button type="button" key={answer.text} className={answers[index] === answer.points ? 'mood-option selected' : 'mood-option'} onClick={() => setAnswers(current => ({ ...current, [index]: answer.points }))}>{answer.text}</button>)}</div>
         </fieldset>)}
         <div className="mood-quiz-actions"><span>Ответь на все вопросы, и тётя Соня вынесет вердикт.</span><button type="button" className="btn sonya-btn" disabled={Object.keys(answers).length !== QUESTIONS.length} onClick={() => setTab('quiz')}>Узнать результат <Sparkles size={15}/></button></div>
-      </> : <article className="mood-result" aria-live="polite">
-        <div className="mood-emoji">{result.emoji}</div><span className="mood-kicker">ТЁТЯ СОНЯ ПОСОВЕЩАЛАСЬ</span><h3>Ты — {result.name}!</h3><b>{result.mood}</b><p>{result.description}</p><blockquote>Совет дня: {result.advice}</blockquote>
+      </> : <article className="mood-result mood-personality-result" aria-live="polite">
+        <div className="mood-emoji">{result.emoji}</div>
+        <div className="mood-personality-copy"><span className="mood-kicker">ТЁТЯ СОНЯ ПОСОВЕЩАЛАСЬ</span><h3>Ты — {result.name}!</h3><b>{result.mood}</b><p>{result.description}</p><blockquote>Совет дня: {result.advice}</blockquote></div>
         <div className="mood-result-actions"><button type="button" className="btn sonya-btn" onClick={share}><Share2 size={16}/> Поделиться результатом</button><button type="button" className="btn dark" onClick={() => setAnswers({})}><RotateCcw size={15}/> Пройти заново</button></div>
       </article>}
     </div>}
