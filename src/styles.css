@@ -74,3 +74,8 @@
 @media(max-width:560px){.facts-section,.index-section,.recipes-section{padding:19px}.fact-feature{grid-template-columns:1fr;gap:15px;padding:20px;min-height:0}.fact-feature-icon{width:76px;height:76px;font-size:42px;border-radius:18px}.fact-feature p{font-size:13px}.facts-actions{align-items:flex-start;flex-direction:column}.index-heading{flex-direction:column}.index-metrics{grid-template-columns:1fr 1fr}.index-metric{padding:13px}.index-metric small{font-size:8px}.index-metric strong{font-size:19px}.chart-panel{padding:13px}.price-chart{gap:4px}.chart-column{min-width:23px}.chart-value{font-size:8px}.recipe-list{grid-template-columns:1fr}.recipe-detail{padding:18px}.recipe-detail h3{font-size:21px}}
 
 .fact-sources{margin-top:10px;font-size:10px;line-height:1.8;color:#91aaa9}.fact-sources a{color:#efc36f;text-decoration:underline;text-underline-offset:3px}
+
+
+/* Десктопная полировка: больше воздуха вокруг навигации и танцпола */
+@media(min-width:761px){.odessa-shell:before{top:132px}.odessa-shell .nav{height:104px}.odessa-shell .dance-section{margin-top:8px}.odessa-shell .dance-section .dance{cursor:pointer}.odessa-shell .dance-section .dance:focus-visible{outline:2px solid #f0c36b;outline-offset:4px}.odessa-shell .hero{padding-top:66px;padding-bottom:58px}.odessa-shell .cards{gap:20px}}
+.odessa-shell .dance-section .dance{cursor:pointer;touch-action:manipulation}.odessa-shell .dance-section .dance:focus-visible{outline:2px solid #f0c36b;outline-offset:3px}
