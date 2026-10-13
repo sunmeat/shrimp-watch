@@ -165,3 +165,61 @@
 .mood-knowledge-review>div{padding:12px;border:1px solid var(--line);border-radius:9px;background:#102c3380}
 .mood-knowledge-review b{display:block;color:#efc36f;font-size:11px;line-height:1.6}
 .mood-knowledge-review p{margin:6px 0 0;color:#a8bcbb;font-size:10px;line-height:1.7}
+
+
+/* Результат теста: аккуратная карточка без расползающейся сетки */
+.mood-personality-result{
+  display:grid;
+  grid-template-columns:88px minmax(0,1fr);
+  align-items:start;
+  gap:18px 22px;
+  min-width:0;
+  padding:clamp(20px,3vw,30px);
+}
+.mood-personality-result>.mood-emoji{
+  grid-column:1;
+  grid-row:1;
+  width:80px;
+  height:80px;
+  font-size:44px;
+  border-radius:20px;
+}
+.mood-personality-copy{grid-column:2;grid-row:1;min-width:0;overflow-wrap:anywhere}
+.mood-personality-copy .mood-kicker{display:block;line-height:1.7;letter-spacing:.1em}
+.mood-personality-copy h3{font-size:clamp(25px,3.2vw,36px);line-height:1.15;letter-spacing:-.045em;margin:10px 0 8px;overflow-wrap:anywhere}
+.mood-personality-copy>b{display:block;color:#efc36f;font-size:13px;line-height:1.6;margin:0 0 10px}
+.mood-personality-copy>p{font-size:13px;line-height:1.85;color:#b4c8c2;margin:0;max-width:68ch}
+.mood-personality-copy blockquote{margin-top:15px;overflow-wrap:anywhere}
+.mood-personality-result .mood-result-actions{
+  grid-column:2;
+  display:flex;
+  align-items:stretch;
+  flex-wrap:wrap;
+  gap:10px;
+  min-width:0;
+  margin-top:0;
+}
+.mood-personality-result .mood-result-actions .btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-width:0;
+  max-width:100%;
+  min-height:44px;
+  padding:11px 15px;
+  line-height:1.4;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:center;
+}
+.mood-personality-result .mood-result-actions .btn svg{flex:0 0 auto}
+@media(max-width:600px){
+  .mood-personality-result{grid-template-columns:minmax(0,1fr);gap:14px;padding:18px}
+  .mood-personality-result>.mood-emoji{grid-column:1;grid-row:auto;width:68px;height:68px;font-size:37px}
+  .mood-personality-copy{grid-column:1;grid-row:auto}
+  .mood-personality-copy .mood-kicker{font-size:8px}
+  .mood-personality-copy h3{font-size:27px}
+  .mood-personality-result .mood-result-actions{grid-column:1;display:grid;grid-template-columns:minmax(0,1fr);width:100%}
+  .mood-personality-result .mood-result-actions .btn{width:100%;font-size:12px}
+}
