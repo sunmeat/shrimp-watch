@@ -9,7 +9,6 @@ export default async function handler(_request, response) {
   try {
     priceState = JSON.parse(await readFile(stateUrl, 'utf8'));
   } catch {
-    // The monitor may not have completed its first successful run yet.
   }
 
   response.status(200).json({
