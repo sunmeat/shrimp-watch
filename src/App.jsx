@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, ChefHat } from 'lucide-react';
 import { SHRIMP_FACTS, SHRIMP_RECIPES } from './shrimp-content.js';
+import ShrimpMood from './ShrimpMood.jsx';
 
 const PRODUCT = 'Королевская креветка сырая, дефростированная, 40/60';
 const SONYA_WISHES = [
@@ -202,6 +203,8 @@ export default function App() {
       </div>
       <div className="facts-foot">Факты относятся к разным видам креветок, поэтому формулировки уточняют, когда свойство характерно не для всех. Наука, золотце, любит точность! 🧠<div className="fact-sources">Источники для проверки: <a href="https://repository.library.noaa.gov/view/noaa/36212/noaa_36212_DS1.pdf" target="_blank" rel="noreferrer">справочник NOAA по биологии креветок</a> · <a href="https://www.fda.gov/food/consumers/advice-about-eating-fish" target="_blank" rel="noreferrer">рекомендации FDA по морепродуктам</a> · <a href="https://www.fisheries.noaa.gov/insight/shrimp-recipes" target="_blank" rel="noreferrer">рецепты NOAA Fisheries</a></div></div>
     </section>
+
+    <ShrimpMood />
 
     <section className="recipes-section" id="recipes">
       <div className="index-heading">
