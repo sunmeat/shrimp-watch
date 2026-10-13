@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, TrendingUp, ChefHat } from 'lucide-react';
+import { Bell, Mail, CircleCheck, Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, ChefHat } from 'lucide-react';
 import { SHRIMP_FACTS, SHRIMP_RECIPES } from './shrimp-content.js';
 
 const PRODUCT = 'Королевская креветка сырая, дефростированная, 40/60';
@@ -173,7 +173,7 @@ export default function App() {
       <div className="facts-top">
         <div>
           <div className="eyebrow"><Sparkles size={15}/> МОРСКИЕ БАЙКИ, КОТОРЫЕ ПРАВДА</div>
-          <h2>100 фактов о креветках. И ни одного про скуку.</h2>
+          <h2>100 фактов о креветках</h2>
           <p>Биология, подводная жизнь, виды, еда и хитрости покупки. Один клик, и Соня достаёт новую историю.</p>
         </div>
         <span className="facts-count">ФАКТ {factIndex + 1} / {SHRIMP_FACTS.length}</span>
@@ -193,46 +193,14 @@ export default function App() {
       <div className="facts-foot">Факты относятся к разным видам креветок, поэтому формулировки уточняют, когда свойство характерно не для всех. Наука, золотце, любит точность! 🧠<div className="fact-sources">Источники для проверки: <a href="https://repository.library.noaa.gov/view/noaa/36212/noaa_36212_DS1.pdf" target="_blank" rel="noreferrer">справочник NOAA по биологии креветок</a> · <a href="https://www.fda.gov/food/consumers/advice-about-eating-fish" target="_blank" rel="noreferrer">рекомендации FDA по морепродуктам</a> · <a href="https://www.fisheries.noaa.gov/insight/shrimp-recipes" target="_blank" rel="noreferrer">рецепты NOAA Fisheries</a></div></div>
     </section>
 
-    <section className="index-section" id="index">
-      <div className="index-heading">
-        <div>
-          <div className="eyebrow"><TrendingUp size={15}/> КРЕВЕТОЧНАЯ БИРЖА</div>
-          <h2>Креветочный индекс</h2>
-          <p>Смотрим, как меняется цена королевской креветки. Никаких гаданий на панцире.</p>
-        </div>
-        <span className="index-stamp">100 г · ₴</span>
-      </div>
-      <div className="index-metrics">
-        <div className="index-metric"><small>ТЕКУЩАЯ ЦЕНА</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₴' : 'Ожидаем замер'}</strong><span>за 100 г</span></div>
-        <div className="index-metric"><small>ЗА КИЛОГРАММ</small><strong>{currentPrice != null ? (currentPrice * 10).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₴' : 'Пока нет данных'}</strong><span>пересчёт по текущей цене</span></div>
-        <div className="index-metric"><small>ИНДЕКС К БАЗОВОМУ ЗАМЕРУ</small><strong>{priceIndex != null ? priceIndex.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) : 'Собираем историю'}</strong><span>{priceIndex != null ? (priceIndex < 100 ? 'Цена снизилась от первого замера' : priceIndex > 100 ? 'Цена выросла от первого замера' : 'Цена на уровне первого замера') : 'Нужно минимум 2 проверенных замера'}</span></div>
-        {discountPercent != null && <div className="index-metric"><small>СКИДКА К ОБЫЧНОЙ ЦЕНЕ</small><strong>{discountPercent}%</strong><span>по данным страницы товара</span></div>}
-      </div>
-      <div className="chart-panel">
-        <div className="chart-title"><b>Последние замеры</b><span>{historyWindow.length ? `${historyWindow.length} точек` : 'История начнёт расти после успешных проверок'}</span></div>
-        {historyWindow.length >= 2 ? <div className="price-chart" role="img" aria-label="График последних цен на креветки">
-          {historyWindow.map((point, index) => {
-            const range = (historyMax ?? 0) - (historyMin ?? 0);
-            const height = range === 0 ? 54 : 18 + ((point.priceUah - historyMin) / range) * 72;
-            return <div className="chart-column" key={point.checkedAt + index} title={new Date(point.checkedAt).toLocaleString('ru-RU') + ': ' + point.priceUah + ' грн'}>
-              <span className="chart-value">{point.priceUah.toLocaleString('ru-RU', { maximumFractionDigits: 1 })}</span>
-              <div className="chart-bar" style={{ height: height + '%' }}/>
-              <small>{new Date(point.checkedAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })}</small>
-            </div>;
-          })}
-        </div> : <div className="chart-empty"><span>📉</span><b>Биржа собирает первые котировки</b><p>После нескольких успешных проверок здесь появится график, а индекс будет считаться от первого сохранённого замера.</p></div>}
-        <p className="chart-note">Индекс = текущая цена ÷ цена первого отображаемого замера × 100. Значение 100 означает, что цена не изменилась. История начинается с момента включения сохранения замеров.</p>
-      </div>
-    </section>
-
     <section className="recipes-section" id="recipes">
       <div className="index-heading">
         <div>
           <div className="eyebrow"><ChefHat size={15}/> КУХНЯ ТЁТИ СОНИ</div>
           <h2>Ну шо, будем вкусно жить?</h2>
-          <p>Пять проверенных домашних идей. Выбирай рецепт, готовь и не передерживай креветочки!</p>
+          <p>Десять домашних идей на любой аппетит. Выбирай рецепт и не передерживай креветочки!</p>
         </div>
-        <span className="index-stamp">5 РЕЦЕПТОВ</span>
+        <span className="index-stamp">10 РЕЦЕПТОВ</span>
       </div>
       <div className="recipe-layout">
         <div className="recipe-list">
