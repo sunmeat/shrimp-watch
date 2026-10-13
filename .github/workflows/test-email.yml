@@ -21,79 +21,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Send test email
+      - name: Send test email with the real discount template
         env:
-          SMTP_HOST: \${{ secrets.SMTP_HOST }}
-          SMTP_PORT: \${{ secrets.SMTP_PORT }}
-          SMTP_USER: \${{ secrets.SMTP_USER }}
-          SMTP_PASS: \${{ secrets.SMTP_PASS }}
-          SMTP_FROM: \${{ secrets.SMTP_FROM }}
-          ALERT_EMAIL: \${{ secrets.ALERT_EMAIL }}
-        run: |
-          node --input-type=module <<'NODE'
-          import nodemailer from 'nodemailer';
-
-          const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, ALERT_EMAIL } = process.env;
-          const missing = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'ALERT_EMAIL']
-            .filter((key) => !process.env[key]);
-          if (missing.length) {
-            throw new Error(\`Missing required GitHub Actions secrets: \${missing.join(', ')}\`);
-          }
-
-          const port = Number(SMTP_PORT);
-          const transporter = nodemailer.createTransport({
-            host: SMTP_HOST,
-            port,
-            secure: port === 465,
-            auth: { user: SMTP_USER, pass: SMTP_PASS },
-          });
-
-          await transporter.verify();
-          const checkedAt = new Date().toLocaleString('ru-RU', {
-            dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Kyiv',
-          });
-          const text = [
-            '🦐 SHRIMPWATCH · КРЕВЕТОЧНАЯ РАЗВЕДКА',
-            '',
-            'Связь есть, шеф! Это тестовое письмо успешно прошло через почтовый сервер.',
-            '',
-            'Что это значит:',
-            '✓ SMTP-настройки работают',
-            '✓ Письмо принято почтовым сервером для доставки',
-            '✓ Разведка готова сообщить, если цена упадёт ниже 40 грн за 100 г',
-            '',
-            \`Проверка связи: \${checkedAt} (Киев)\`,
-            '',
-            'Пусть креветки будут вкусными, а цена одесской!',
-            'Твоя креветочная разведка 🦐',
-          ].join('\\n');
-          const html = \`<!doctype html><html><body style="margin:0;padding:0;background:#f4f1eb;font-family:Arial,Helvetica,sans-serif;color:#29251f">
-            <div style="max-width:600px;margin:0 auto;padding:28px 16px">
-              <div style="background:#20221f;border-radius:18px 18px 0 0;padding:24px 28px;color:#fff">
-                <div style="font-size:12px;letter-spacing:2px;color:#ffc48a;font-weight:bold">🦐 SHRIMPWATCH</div>
-                <h1 style="margin:12px 0 6px;font-size:28px;line-height:1.2">Связь есть, шеф!</h1>
-                <p style="margin:0;color:#e5ded4;font-size:15px">Тестовое письмо от креветочной разведки</p>
-              </div>
-              <div style="background:#fff;padding:28px;border-radius:0 0 18px 18px;box-shadow:0 8px 30px #24211b12">
-                <div style="background:#edf8e9;border:1px solid #cce7c3;border-radius:14px;padding:18px;margin-bottom:22px">
-                  <div style="font-size:17px;font-weight:bold;color:#27642c">✓ Почтовый канал работает</div>
-                  <p style="font-size:14px;line-height:1.6;color:#42623e;margin:8px 0 0">SMTP-проверка пройдена, почтовый сервер принял письмо для доставки.</p>
-                </div>
-                <h2 style="font-size:20px;margin:0 0 12px">Что дальше?</h2>
-                <p style="font-size:15px;line-height:1.7;margin:0 0 18px">ShrimpWatch проверяет цену каждый час. Когда креветки на странице Сильпо будут стоить <strong>меньше 40 грн за 100 г</strong>, мы отправим отдельное письмо с ценой и ссылкой на товар.</p>
-                <div style="border-top:1px solid #eee7de;padding-top:16px;font-size:12px;color:#777064">Проверка связи: \${checkedAt} (Киев)</div>
-              </div>
-              <p style="text-align:center;color:#777064;font-size:13px;line-height:1.6;padding:8px 16px">Пусть креветки будут вкусными, а цена одесской!<br><strong>Твоя креветочная разведка 🦐</strong></p>
-            </div></body></html>\`;
-
-          await transporter.sendMail({
-            from: SMTP_FROM || SMTP_USER,
-            to: ALERT_EMAIL,
-            subject: '🦐 ShrimpWatch: связь есть, шеф!',
-            text,
-            html,
-          });
-
-          console.log('SMTP verification passed and test email accepted by the mail server.');
-          console.log('Recipient:', ALERT_EMAIL);
-          NODE
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+        run: node scripts/send-test-email.mjs
