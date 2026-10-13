@@ -4,7 +4,7 @@ import { buildDiscountEmail } from './discount-email.mjs';
 const productUrl = 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122';
 const statePath = 'data/price-state.json';
 const alertPriceThreshold = 40;
-const productName = 'Креветка королівська сира дефростована 40/60';
+const productName = 'Королевская креветка сырая, дефростированная 40/60';
 const productNameVariants = ['Креветка королівська сира дефростована 40/60', 'Креветка королівська сира, дефростована 40/60', 'Креветка королівська сира дефростована 40/60 100г'];
 
 function decodeHtml(value) {
