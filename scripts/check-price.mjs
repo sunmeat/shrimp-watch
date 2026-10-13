@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 
 const productUrl = 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122';
 const statePath = 'data/price-state.json';
+const alertPriceThreshold = 40;
 const productName = 'Креветка королівська сира дефростована 40/60';
 const productNameVariants = ['Креветка королівська сира дефростована 40/60', 'Креветка королівська сира, дефростована 40/60', 'Креветка королівська сира дефростована 40/60 100г'];
 
@@ -85,9 +86,9 @@ async function main() {
   const previous = await readPreviousState();
   const now = new Date().toISOString();
   const previousPrice = Number(previous?.currentPrice);
-  const priceDropped = previous && Number.isFinite(previousPrice) && previousPrice > 0 && prices.currentPrice < previousPrice;
-  const saleStarted = prices.isSale && (!previous || !previous.isSale);
-  const shouldAlert = Boolean(priceDropped || saleStarted);
+  const belowThreshold = prices.currentPrice < alertPriceThreshold;
+  const wasBelowThreshold = Number.isFinite(previousPrice) && previousPrice > 0 && previousPrice < alertPriceThreshold;
+  const shouldAlert = belowThreshold && (!previous || !wasBelowThreshold);
 
   const previousHistory = Array.isArray(previous?.priceHistory) ? previous.priceHistory : [];
   const priceHistory = [
@@ -101,6 +102,8 @@ async function main() {
     currentPrice: prices.currentPrice,
     regularPrice: prices.regularPrice,
     isSale: prices.isSale,
+    alertPriceThreshold,
+    belowThreshold,
     lastCheckedAt: now,
     priceHistory,
     source: 'official Silpo product page',
@@ -110,21 +113,19 @@ async function main() {
   console.log(JSON.stringify({ ...state, previousPrice: previous?.currentPrice ?? null, shouldAlert }, null, 2));
 
   if (shouldAlert) {
-    const previousLine = previousPrice > 0 ? `Предыдущая цена: ${previousPrice} грн / 100 г.\n` : '';
-    const regularLine = prices.regularPrice ? `Обычная цена на странице: ${prices.regularPrice} грн / 100 г.\n` : '';
     const body = [
-      'ShrimpWatch обнаружил изменение цены на креветки!',
+      '🦐 ShrimpWatch: креветки дешевле 40 грн!',
       '',
       productName,
       `Текущая цена: ${prices.currentPrice} грн / 100 г.`,
-      regularLine.trim(),
-      previousLine.trim(),
+      `Порог уведомления: меньше ${alertPriceThreshold} грн / 100 г.`,
+      prices.regularPrice ? `Обычная цена на странице: ${prices.regularPrice} грн / 100 г.` : '',
       `Страница товара: ${productUrl}`,
       '',
       'Важно: цена взята с публичной страницы товара. Наличие в конкретном магазине не подтверждено.',
       `Проверено: ${now}`,
     ].filter(Boolean).join('\n');
-    await sendEmail('ShrimpWatch: цена на креветки изменилась', body);
+    await sendEmail('ShrimpWatch: креветки дешевле 40 грн!', body);
   }
 }
 
