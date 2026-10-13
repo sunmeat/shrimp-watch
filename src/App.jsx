@@ -86,6 +86,18 @@ export default function App() {
     return () => window.clearInterval(timer);
   }, []);
 
+  const playDanceSqueak = () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    if (!audioRef.current) audioRef.current = new AudioContextClass();
+    const context = audioRef.current;
+    if (context.state === 'suspended') {
+      context.resume().then(() => squeak(context)).catch(() => {});
+    } else {
+      squeak(context);
+    }
+  };
+
   const latest = status?.latestCheck;
   const isSale = Boolean(latest?.isSale);
   const currentPrice = latest?.checkedAt ? latest?.priceUah : null;
@@ -105,7 +117,7 @@ export default function App() {
     <div className="odessa-ribbon">ОДЕССА МАМА · МОРЕ РЯДОМ · СКИДКИ ПО ДЕЛУ</div>
     <nav className="nav">
       <a className="brand" href="#"><span>🦐</span><b>SHRIMP<span>WATCH</span><small>КРЕВЕТОЧНАЯ РАЗВЕДКА</small></b></a>
-      <span className="live"><i/> СВОИ ЦЕНЫ ЗНАЕМ</span>
+      <span className="live"><i/> {isSale ? 'Есть скидка!' : 'Стандартная цена'}</span>
     </nav>
 
     <section className="hero">
@@ -130,7 +142,7 @@ export default function App() {
         <div><div className="eyebrow"><Waves size={15}/> ПРИВОЗ НЕ СПИТ</div><h2>Танцуют, как на свадьбе у племянницы.</h2></div>
         <span className={isSale ? 'sale-pill sale-active' : 'sale-pill'}><i/>{isSale ? 'АКЦИЯ! ПИ-ПИ-ПИ!' : 'ПОКА ТАНЦУЕМ ДЛЯ ДУШИ'}</span>
       </div>
-      <div className="dance">
+      <div className="dance" role="button" tabIndex={0} aria-label="Нажми, чтобы креветки пищали" onClick={playDanceSqueak} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); playDanceSqueak(); } }}>
         <div className="orbit one"/><div className="orbit two"/>
         <span className="shrimp s1">🦐</span><span className="shrimp s2">🦐</span><span className="shrimp s3">🦐</span>
         <span className="shrimp s4">🦐</span><i className="star a">✦</i><i className="star b">✧</i>
