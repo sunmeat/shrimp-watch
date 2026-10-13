@@ -100,7 +100,7 @@ export default function App() {
 
   const latest = status?.latestCheck;
   const isSale = Boolean(latest?.isSale);
-  const currentPrice = latest?.checkedAt ? latest?.priceUah : null;
+  const currentPrice = latest && Number.isFinite(Number(latest.priceUah)) && Number(latest.priceUah) > 0 ? Number(latest.priceUah) : null;
   const priceHistory = (status?.priceHistory ?? []).filter(point => Number.isFinite(point.priceUah) && point.priceUah > 0);
   const historyWindow = priceHistory.slice(-14);
   const historyStart = historyWindow[0]?.priceUah;
@@ -155,8 +155,8 @@ export default function App() {
       <article className="card price-card">
         <div className="label">КРЕВЕТОЧНЫЙ КУРС <span className="tag">40/60</span></div>
         <div className="product">🦐</div><h2>Королевская креветка</h2><p>{PRODUCT}</p><hr/>
-        <div className="price"><div><small>Цена за 100 граммов, как положено</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Ждём'} <sub>{currentPrice != null ? '₴ / 100 г' : ''}</sub></strong></div><span>{isSale ? '🎉 Есть акция!' : 'Без паники'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Ждём свежую проверку'}</span></div>
-        {!latest?.checkedAt && <p className="price-hint">Тётя Соня не станет выдумывать цифры. Как только мониторинг получит свежую цену, она появится здесь.</p>}
+        <div className="price"><div><small>Цена за 100 граммов, как положено</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Ждём'} <sub>{currentPrice != null ? '₴ / 100 г' : ''}</sub></strong></div><span>{isSale ? '🎉 Есть акция!' : 'Без паники'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Цена указана в карточке Silpo'}</span></div>
+        {!latest?.checkedAt && <p className="price-hint">В карточке Silpo указано {currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' грн за 100 г' : 'что цена пока не получена'}. Автоматический мониторинг ещё не подтвердил её самостоятельно.</p>}
         <a className="link" href="https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122" target="_blank" rel="noreferrer">Проверить у продавца ↗</a>
       </article>
       <article className="card status-card">
