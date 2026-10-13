@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 await transporter.verify();
 
 const email = buildDiscountEmail({
-  productName: 'Креветка королівська сира дефростована 40/60',
+  productName: 'Королевская креветка сырая, дефростированная 40/60',
   productUrl: 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122',
   currentPrice: 39.99,
   regularPrice: 49.99,
