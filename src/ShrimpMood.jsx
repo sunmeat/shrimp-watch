@@ -33,6 +33,14 @@ const PREDICTIONS = [
   'Пусть день будет мягким, как мякоть правильно приготовленной креветки, и без неприятных сюрпризов внутри.',
 ];
 
+const KNOWLEDGE_QUESTIONS = [
+  { question: 'Сколько ног у большинства настоящих креветок?', options: ['4', '8', '10', '12'], correct: 2, explanation: 'У десятиногих ракообразных пять пар ходильных ног, хотя строение разных групп может отличаться.' },
+  { question: 'Как креветки обычно растут?', options: ['Меняют панцирь при линьке', 'Отращивают новый хвост каждый месяц', 'Набирают размер без изменений панциря', 'Переходят на сушу'], correct: 0, explanation: 'Жёсткий наружный панцирь не растёт вместе с телом, поэтому креветка периодически линяет.' },
+  { question: 'Как называется креветка, известная мощным щелчком клешни?', options: ['Креветка-пчела', 'Креветка-пистолет', 'Креветка-скрипач', 'Креветка-молот'], correct: 1, explanation: 'Креветки-пистолеты создают быстрый щелчок клешнёй и кавитационный пузырёк.' },
+  { question: 'Все ли креветки живут в солёной воде?', options: ['Да, без исключений', 'Нет, есть пресноводные виды', 'Только молодые', 'Только тропические'], correct: 1, explanation: 'Существуют многочисленные пресноводные виды креветок, живущие в реках и озёрах.' },
+  { question: 'Что означает линька у креветки?', options: ['Смена панциря', 'Смена цвета каждый день', 'Переход в другой вид', 'Подготовка к зимней спячке'], correct: 0, explanation: 'Во время линьки креветка сбрасывает старый экзоскелет и некоторое время остаётся особенно уязвимой.' },
+];
+
 const DAILY = [
   { title: 'Королевская креветка', emoji: '👑', line: 'Держим марку, но чек всё равно сохраняем.' },
   { title: 'Тигровая креветка', emoji: '🐅', line: 'Характер полосатый, решения взвешенные.' },
@@ -54,10 +62,14 @@ export default function ShrimpMood() {
   const [answers, setAnswers] = useState({});
   const [predictionIndex, setPredictionIndex] = useState(() => dayNumber() % PREDICTIONS.length);
   const [copied, setCopied] = useState(false);
+  const [knowledgeIndex, setKnowledgeIndex] = useState(0);
+  const [knowledgeAnswers, setKnowledgeAnswers] = useState([]);
 
   const complete = Object.keys(answers).length === QUESTIONS.length;
   const score = Object.values(answers).reduce((sum, value) => sum + value, 0);
-  const result = SHRIMPS[Math.min(SHRIMPS.length - 1, Math.max(0, Math.round((score - QUESTIONS.length) / 2)))];
+  const result = SHRIMPS[Math.min(SHRIMPS.length - 1, Math.max(0, Math.round((score - QUESTIONS.length) / (QUESTIONS.length * 2) * (SHRIMPS.length - 1))))];
+  const knowledgeComplete = knowledgeAnswers.length === KNOWLEDGE_QUESTIONS.length;
+  const knowledgeScore = knowledgeAnswers.reduce((sum, answer, index) => sum + (answer === KNOWLEDGE_QUESTIONS[index].correct ? 1 : 0), 0);
   const dateLabel = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' }).format(new Date());
 
   const shareText = tab === 'quiz' && complete
@@ -99,6 +111,7 @@ export default function ShrimpMood() {
     <div className="mood-tabs" role="tablist" aria-label="Креветочные развлечения">
       <button type="button" role="tab" aria-selected={tab === 'daily'} className={tab === 'daily' ? 'mood-tab active' : 'mood-tab'} onClick={() => setTab('daily')}><Waves size={15}/> Креветка дня</button>
       <button type="button" role="tab" aria-selected={tab === 'quiz'} className={tab === 'quiz' ? 'mood-tab active' : 'mood-tab'} onClick={() => setTab('quiz')}><Fish size={15}/> Какая ты креветка?</button>
+      <button type="button" role="tab" aria-selected={tab === 'knowledge'} className={tab === 'knowledge' ? 'mood-tab active' : 'mood-tab'} onClick={() => setTab('knowledge')}><Fish size={15}/> Морской тест</button>
       <button type="button" role="tab" aria-selected={tab === 'prediction'} className={tab === 'prediction' ? 'mood-tab active' : 'mood-tab'} onClick={() => setTab('prediction')}><Sparkles size={15}/> Предсказание</button>
     </div>
 
@@ -119,6 +132,25 @@ export default function ShrimpMood() {
         <div className="mood-emoji">{result.emoji}</div><span className="mood-kicker">ТЁТЯ СОНЯ ПОСОВЕЩАЛАСЬ</span><h3>Ты — {result.name}!</h3><b>{result.mood}</b><p>{result.description}</p><blockquote>Совет дня: {result.advice}</blockquote>
         <div className="mood-result-actions"><button type="button" className="btn sonya-btn" onClick={share}><Share2 size={16}/> Поделиться результатом</button><button type="button" className="btn dark" onClick={() => setAnswers({})}><RotateCcw size={15}/> Пройти заново</button></div>
       </article>}
+    </div>}
+
+    {tab === 'knowledge' && <div className="mood-quiz" aria-live="polite">
+      {!knowledgeComplete ? <>
+        <div className="mood-progress"><span>ВОПРОС {knowledgeIndex + 1} ИЗ {KNOWLEDGE_QUESTIONS.length}</span><div><i style={{ width: `${knowledgeAnswers.length / KNOWLEDGE_QUESTIONS.length * 100}%` }}/></div></div>
+        <fieldset className="mood-question">
+          <legend>{KNOWLEDGE_QUESTIONS[knowledgeIndex].question}</legend>
+          <div className="mood-options mood-knowledge-options">{KNOWLEDGE_QUESTIONS[knowledgeIndex].options.map((option, index) => <button type="button" key={option} className={knowledgeAnswers.length > knowledgeIndex && knowledgeAnswers[knowledgeIndex] === index ? 'mood-option selected' : 'mood-option'} disabled={knowledgeAnswers.length > knowledgeIndex} onClick={() => setKnowledgeAnswers(current => [...current, index])}>{option}</button>)}</div>
+        </fieldset>
+        <p className="mood-knowledge-note">Пять вопросов о морской жизни. Никаких экзаменационных комиссий, только любопытство!</p>
+      </> : <article className="mood-result">
+        <div className="mood-emoji">{knowledgeScore === KNOWLEDGE_QUESTIONS.length ? '🏆' : knowledgeScore >= 3 ? '🐚' : '🦐'}</div>
+        <span className="mood-kicker">ВЕРДИКТ МОРСКОЙ АКАДЕМИИ ТЁТИ СОНИ</span>
+        <h3>{knowledgeScore} из {KNOWLEDGE_QUESTIONS.length} правильных ответов!</h3>
+        <p>{knowledgeScore === KNOWLEDGE_QUESTIONS.length ? 'Таки морской профессор! Тётя Соня просит автограф.' : knowledgeScore >= 3 ? 'Хороший улов знаний! Ещё пара фактов, и будешь консультировать Привоз.' : 'Не беда, золотце. Море большое, узнавать ещё много интересного.'}</p>
+        <div className="mood-knowledge-review">{KNOWLEDGE_QUESTIONS.map((item, index) => <div key={item.question}><b>{knowledgeAnswers[index] === item.correct ? '✓' : '•'} {item.question}</b><p>{item.explanation}</p></div>)}</div>
+        <div className="mood-result-actions"><button type="button" className="btn sonya-btn" onClick={share}><Share2 size={16}/> Поделиться результатом</button><button type="button" className="btn dark" onClick={() => { setKnowledgeIndex(0); setKnowledgeAnswers([]); }}><RotateCcw size={15}/> Пройти заново</button></div>
+      </article>}
+      {!knowledgeComplete && knowledgeAnswers.length > 0 && <div className="mood-quiz-actions"><span>Ответ принят. Двигаемся дальше, золотце.</span><button type="button" className="btn sonya-btn" onClick={() => setKnowledgeIndex(index => Math.min(KNOWLEDGE_QUESTIONS.length - 1, index + 1))}>Следующий вопрос <Sparkles size={15}/></button></div>}
     </div>}
 
     {tab === 'prediction' && <article className="mood-prediction" aria-live="polite">
