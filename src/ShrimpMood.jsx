@@ -62,9 +62,11 @@ export default function ShrimpMood() {
 
   const shareText = tab === 'quiz' && complete
     ? `Сегодня я — ${result.emoji} ${result.name}! ${result.advice}\nПроверь себя на ShrimpWatch: https://shrimp-watch.vercel.app/`
-    : tab === 'prediction'
-      ? `Моё одесское креветочное предсказание: «${PREDICTIONS[predictionIndex]}»\nЗагляни на ShrimpWatch: https://shrimp-watch.vercel.app/`
-      : `Креветка дня на ${dateLabel}: ${daily.emoji} ${daily.title}. ${daily.line}\nА ты какая креветка? https://shrimp-watch.vercel.app/`;
+    : tab === 'knowledge' && knowledgeComplete
+      ? `Мой результат креветочной викторины: ${knowledgeScore}/${KNOWLEDGE_QUESTIONS.length}. А сколько наберёшь ты? https://shrimp-watch.vercel.app/`
+      : tab === 'prediction'
+        ? `Моё одесское креветочное предсказание: «${PREDICTIONS[predictionIndex]}»\nЗагляни на ShrimpWatch: https://shrimp-watch.vercel.app/`
+        : `Креветка дня на ${dateLabel}: ${daily.emoji} ${daily.title}. ${daily.line}\nА ты какая креветка? https://shrimp-watch.vercel.app/`;
 
   async function share() {
     try {
