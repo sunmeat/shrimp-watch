@@ -1,6 +1,12 @@
 name: ShrimpWatch price check
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/check-price.mjs'
+      - '.github/workflows/price-watch.yml'
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
@@ -32,6 +38,7 @@ jobs:
       - name: Check price and send alert if needed
         run: npm run watch:price
         env:
+          SILPO_FILIAL_ID: ${{ secrets.SILPO_FILIAL_ID }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
