@@ -130,31 +130,38 @@ async function fetchCatalogPrice() {
 
 function extractPricesFromHtml(html) {
   const decodeText = (value) => decodeHtml(value
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' '));
+    .replace(/\\s+/g, ' '));
 
-  const clean = decodeText(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' '));
+  const clean = decodeText(html.replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' '));
   const lower = clean.toLocaleLowerCase('uk-UA');
-  const titleIndexes = productNameVariants
-    .map((name) => lower.indexOf(name.toLocaleLowerCase('uk-UA')))
-    .filter((index) => index >= 0);
-  const titleIndex = titleIndexes.length ? Math.min(...titleIndexes) : -1;
-
-  if (titleIndex < 0) {
-    throw new Error('Название нужного товара не найдено на странице.');
+  const titleIndexes = [];
+  for (const name of productNameVariants) {
+    const needle = name.toLocaleLowerCase('uk-UA');
+    let from = 0;
+    while (from < lower.length) {
+      const index = lower.indexOf(needle, from);
+      if (index < 0) break;
+      titleIndexes.push(index);
+      from = index + needle.length;
+    }
   }
 
-  const excerpt = clean.slice(titleIndex, titleIndex + 4000);
-  const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\s*(?:грн|₴)/gi)]
-    .map((match) => Number(match[1].replace(',', '.')))
-    .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
+  for (const titleIndex of [...new Set(titleIndexes)].sort((a, b) => a - b)) {
+    const excerpt = clean.slice(titleIndex, titleIndex + 2500);
+    const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\\s*(?:грн|₴)/gi)]
+      .map((match) => Number(match[1].replace(',', '.')))
+      .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
+    if (!visiblePrices.length) continue;
 
-  const candidates = [...new Set(visiblePrices)].sort((a, b) => a - b);
-  if (!candidates.length) throw new Error('Не удалось найти цену рядом с названием товара.');
-  const currentPrice = candidates[0];
-  const regularPrice = candidates.find((price) => price > currentPrice) ?? null;
-  return { currentPrice, regularPrice, isSale: regularPrice !== null && currentPrice < regularPrice };
+    const candidates = [...new Set(visiblePrices)].sort((a, b) => a - b);
+    const currentPrice = candidates[0];
+    const regularPrice = candidates.find((price) => price > currentPrice) ?? null;
+    return { currentPrice, regularPrice, isSale: regularPrice !== null && currentPrice < regularPrice };
+  }
+
+  throw new Error('Не удалось найти цену рядом с названием товара в полученном тексте.');
 }
 
 async function getCurrentPrice() {
@@ -174,7 +181,6 @@ async function getCurrentPrice() {
     });
     if (!response.ok) throw new Error(`Reader proxy returned HTTP ${response.status}`);
     const text = await response.text();
-    console.log(`Reader proxy response preview: ${text.slice(0, 900).replace(/\\s+/g, ' ')}`);
     const prices = extractPricesFromHtml(text);
     console.log('Price source: Silpo page via text-reader proxy.');
     return { ...prices, source: 'Silpo product page via text-reader proxy' };
