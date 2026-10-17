@@ -174,6 +174,7 @@ async function getCurrentPrice() {
     });
     if (!response.ok) throw new Error(`Reader proxy returned HTTP ${response.status}`);
     const text = await response.text();
+    console.log(`Reader proxy response preview: ${text.slice(0, 900).replace(/\\s+/g, ' ')}`);
     const prices = extractPricesFromHtml(text);
     console.log('Price source: Silpo page via text-reader proxy.');
     return { ...prices, source: 'Silpo product page via text-reader proxy' };
