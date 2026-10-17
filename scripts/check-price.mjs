@@ -167,7 +167,7 @@ async function getCurrentPrice() {
   }
 
   try {
-    const proxyUrl = `https://r.jina.ai/http://${productUrl.replace(/^https?:\\/\\//, '')}`;
+    const proxyUrl = `https://r.jina.ai/http://${productUrl.replace('https://', '')}`;
     const response = await fetch(proxyUrl, {
       headers: { accept: 'text/plain', 'user-agent': 'ShrimpWatch/1.0' },
       signal: AbortSignal.timeout(25000),
