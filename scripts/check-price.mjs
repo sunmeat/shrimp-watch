@@ -130,11 +130,11 @@ async function fetchCatalogPrice() {
 
 function extractPricesFromHtml(html) {
   const decodeText = (value) => decodeHtml(value
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\\s+/g, ' '));
+    .replace(/\s+/g, ' '));
 
-  const clean = decodeText(html.replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' '));
+  const clean = decodeText(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' '));
   const lower = clean.toLocaleLowerCase('uk-UA');
   const titleIndexes = [];
   for (const name of productNameVariants) {
@@ -150,7 +150,7 @@ function extractPricesFromHtml(html) {
 
   for (const titleIndex of [...new Set(titleIndexes)].sort((a, b) => a - b)) {
     const excerpt = clean.slice(titleIndex, titleIndex + 2500);
-    const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\\s*(?:грн|₴)/gi)]
+    const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\s*(?:грн|₴)/gi)]
       .map((match) => Number(match[1].replace(',', '.')))
       .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
     if (!visiblePrices.length) continue;
