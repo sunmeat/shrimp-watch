@@ -166,11 +166,26 @@ async function getCurrentPrice() {
     console.warn(`Catalog API unavailable: ${apiError.message}`);
   }
 
+  try {
+    const proxyUrl = `https://r.jina.ai/http://${productUrl.replace(/^https?:\\/\\//, '')}`;
+    const response = await fetch(proxyUrl, {
+      headers: { accept: 'text/plain', 'user-agent': 'ShrimpWatch/1.0' },
+      signal: AbortSignal.timeout(25000),
+    });
+    if (!response.ok) throw new Error(`Reader proxy returned HTTP ${response.status}`);
+    const text = await response.text();
+    const prices = extractPricesFromHtml(text);
+    console.log('Price source: Silpo page via text-reader proxy.');
+    return { ...prices, source: 'Silpo product page via text-reader proxy' };
+  } catch (proxyError) {
+    console.warn(`Reader proxy unavailable: ${proxyError.message}`);
+  }
+
   const response = await fetch(productUrl, {
     headers: { ...browserHeaders, referer: 'https://silpo.ua/' },
     signal: AbortSignal.timeout(20000),
   });
-  if (!response.ok) throw new Error(`Catalog API failed and Silpo product page returned HTTP ${response.status}`);
+  if (!response.ok) throw new Error(`Catalog API and reader proxy failed; Silpo product page returned HTTP ${response.status}`);
   const prices = extractPricesFromHtml(await response.text());
   console.log('Price source: Silpo product page fallback.');
   return { ...prices, source: 'official Silpo product page' };
