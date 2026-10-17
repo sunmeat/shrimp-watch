@@ -18,11 +18,11 @@ function decodeHtml(value) {
 
 function extractPrices(html) {
   const decodeText = (value) => decodeHtml(value
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\\s+/g, ' '));
+    .replace(/\s+/g, ' '));
 
-  const clean = decodeText(html.replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' '));
+  const clean = decodeText(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' '));
   const lower = clean.toLocaleLowerCase('uk-UA');
   const titleIndexes = productNameVariants
     .map((name) => lower.indexOf(name.toLocaleLowerCase('uk-UA')))
@@ -34,11 +34,11 @@ function extractPrices(html) {
   }
 
   const excerpt = clean.slice(titleIndex, titleIndex + 4000);
-  const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\\s*(?:грн|₴)/gi)]
+  const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\s*(?:грн|₴)/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
 
-  const jsonPrices = [...html.matchAll(/"(?:price|salePrice|specialPrice|oldPrice|regularPrice)"\\s*:\\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
+  const jsonPrices = [...html.matchAll(/"(?:price|salePrice|specialPrice|oldPrice|regularPrice)"\s*:\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
 
