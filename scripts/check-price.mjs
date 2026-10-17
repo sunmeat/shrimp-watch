@@ -17,29 +17,39 @@ function decodeHtml(value) {
 }
 
 function extractPrices(html) {
-  const clean = decodeHtml(html
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+  const decodeText = (value) => decodeHtml(value
+    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' '));
-  const lower = clean.toLocaleLowerCase('uk-UA');
-  const titleIndex = productNameVariants
-    .map((name) => lower.indexOf(name.toLocaleLowerCase('uk-UA')))
-    .find((index) => index >= 0);
-  const excerpt = titleIndex >= 0 ? clean.slice(titleIndex, titleIndex + 2400) : clean.slice(0, 8000);
+    .replace(/\\s+/g, ' '));
 
-  const offers = [...html.matchAll(/"price"\s*:\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
+  const clean = decodeText(html.replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' '));
+  const lower = clean.toLocaleLowerCase('uk-UA');
+  const titleIndexes = productNameVariants
+    .map((name) => lower.indexOf(name.toLocaleLowerCase('uk-UA')))
+    .filter((index) => index >= 0);
+  const titleIndex = titleIndexes.length ? Math.min(...titleIndexes) : -1;
+
+  if (titleIndex < 0) {
+    throw new Error('Название нужного товара не найдено на странице. Цена не обновлена, чтобы не сохранить чужую цену.');
+  }
+
+  const excerpt = clean.slice(titleIndex, titleIndex + 4000);
+  const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\\s*(?:грн|₴)/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
-  const priceMatches = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\s*(?:грн|₴)/gi)]
+
+  const jsonPrices = [...html.matchAll(/"(?:price|salePrice|specialPrice|oldPrice|regularPrice)"\\s*:\\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
     .map((match) => Number(match[1].replace(',', '.')))
-    .filter((price) => Number.isFinite(price) && price > 0);
+    .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
 
-  const prices = priceMatches.length ? priceMatches : offers;
-  if (!prices.length) throw new Error('Не удалось найти цену товара в HTML/JSON-LD страницы. Старое состояние цены сохранено.');
+  // Prefer prices found near the exact product name. The lowest candidate is the likely current promotional price.
+  const candidates = [...new Set(visiblePrices.length ? visiblePrices : jsonPrices)].sort((a, b) => a - b);
+  if (!candidates.length) {
+    throw new Error('Не удалось найти цену рядом с названием товара. Старое состояние цены сохранено.');
+  }
 
-  const currentPrice = prices[0];
-  const regularPrice = prices.find((price, index) => index > 0 && price > currentPrice) ?? null;
+  const currentPrice = candidates[0];
+  const regularPrice = candidates.find((price) => price > currentPrice) ?? null;
   return { currentPrice, regularPrice, isSale: regularPrice !== null && currentPrice < regularPrice };
 }
 
