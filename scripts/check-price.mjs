@@ -2,10 +2,22 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { buildDiscountEmail } from './discount-email.mjs';
 
 const productUrl = 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122';
+const catalogApiUrl = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
+const filialId = process.env.SILPO_FILIAL_ID || '2405';
 const statePath = 'data/price-state.json';
 const alertPriceThreshold = 40;
 const productName = 'Королевская креветка сырая, дефростированная 40/60';
-const productNameVariants = ['Креветка королівська сира дефростована 40/60', 'Креветка королівська сира, дефростована 40/60', 'Креветка королівська сира дефростована 40/60 100г'];
+const productNameVariants = [
+  'Креветка королівська сира дефростована 40/60',
+  'Креветка королівська сира, дефростована 40/60',
+  'Креветка королівська сира дефростована 40/60 100г',
+];
+
+const browserHeaders = {
+  'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  accept: 'application/json, text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'uk-UA,uk;q=0.9,en-US;q=0.8,en;q=0.7',
+};
 
 function decodeHtml(value) {
   return value
@@ -16,7 +28,107 @@ function decodeHtml(value) {
     .replace(/&#39;|&apos;/g, "'");
 }
 
-function extractPrices(html) {
+function parseMoney(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value !== 'string') return null;
+  const normalized = value.replace(/\s/g, '').replace(',', '.').replace(/грн|₴/gi, '');
+  const match = normalized.match(/\d+(?:\.\d{1,2})?/);
+  if (!match) return null;
+  const price = Number(match[0]);
+  return Number.isFinite(price) && price > 0 && price < 100000 ? price : null;
+}
+
+function productMatches(value) {
+  if (typeof value !== 'string') return false;
+  const normalized = value.toLocaleLowerCase('uk-UA').replace(/[.,]/g, ' ').replace(/\s+/g, ' ');
+  return productNameVariants.some((name) => {
+    const target = name.toLocaleLowerCase('uk-UA').replace(/[.,]/g, ' ').replace(/\s+/g, ' ');
+    return normalized.includes(target);
+  });
+}
+
+function walkObjects(value, visit) {
+  if (!value || typeof value !== 'object') return;
+  if (Array.isArray(value)) {
+    for (const item of value) walkObjects(item, visit);
+    return;
+  }
+  visit(value);
+  for (const child of Object.values(value)) walkObjects(child, visit);
+}
+
+function getFieldValue(object, names) {
+  const wanted = new Set(names.map((name) => name.toLowerCase()));
+  let found = null;
+  walkObjects(object, (item) => {
+    if (found !== null) return;
+    for (const [key, value] of Object.entries(item)) {
+      if (wanted.has(key.toLowerCase())) {
+        const parsed = parseMoney(value);
+        if (parsed !== null) {
+          found = parsed;
+          return;
+        }
+      }
+    }
+  });
+  return found;
+}
+
+function extractCatalogProduct(data) {
+  const matches = [];
+  walkObjects(data, (item) => {
+    const directStrings = Object.entries(item)
+      .filter(([, value]) => typeof value === 'string')
+      .map(([, value]) => value);
+    if (directStrings.some(productMatches)) matches.push(item);
+  });
+
+  if (!matches.length) {
+    throw new Error(`Silpo catalog API did not return the target product. Top-level keys: ${Object.keys(data ?? {}).join(', ') || 'none'}`);
+  }
+
+  for (const product of matches) {
+    const currentPrice = getFieldValue(product, [
+      'displayPrice', 'priceWithDiscount', 'discountPrice', 'salePrice',
+      'specialPrice', 'currentPrice', 'price',
+    ]);
+    if (currentPrice === null) continue;
+    const regularPrice = getFieldValue(product, [
+      'displayOldPrice', 'oldPrice', 'regularPrice', 'priceWithoutDiscount',
+      'originalPrice', 'basePrice',
+    ]);
+    return {
+      currentPrice,
+      regularPrice: regularPrice !== null && regularPrice > currentPrice ? regularPrice : null,
+      isSale: regularPrice !== null && currentPrice < regularPrice,
+    };
+  }
+
+  throw new Error('Silpo catalog API returned the target product, but no recognizable price field was found.');
+}
+
+async function fetchCatalogPrice() {
+  const response = await fetch(catalogApiUrl, {
+    method: 'POST',
+    headers: { ...browserHeaders, 'content-type': 'application/json;charset=UTF-8', origin: 'https://silpo.ua', referer: 'https://silpo.ua/' },
+    body: JSON.stringify({
+      method: 'GetSimpleCatalogItems',
+      data: {
+        customFilter: 'Креветка королівська сира дефростована 40/60',
+        filialId,
+        skuPerPage: 100,
+        pageNumber: 1,
+      },
+    }),
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!response.ok) throw new Error(`Silpo catalog API returned HTTP ${response.status}`);
+  const data = await response.json();
+  return extractCatalogProduct(data);
+}
+
+function extractPricesFromHtml(html) {
   const decodeText = (value) => decodeHtml(value
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
@@ -30,7 +142,7 @@ function extractPrices(html) {
   const titleIndex = titleIndexes.length ? Math.min(...titleIndexes) : -1;
 
   if (titleIndex < 0) {
-    throw new Error('Название нужного товара не найдено на странице. Цена не обновлена, чтобы не сохранить чужую цену.');
+    throw new Error('Название нужного товара не найдено на странице.');
   }
 
   const excerpt = clean.slice(titleIndex, titleIndex + 4000);
@@ -38,19 +150,30 @@ function extractPrices(html) {
     .map((match) => Number(match[1].replace(',', '.')))
     .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
 
-  const jsonPrices = [...html.matchAll(/"(?:price|salePrice|specialPrice|oldPrice|regularPrice)"\s*:\s*"?([0-9]+(?:[.,][0-9]{1,2})?)"?/gi)]
-    .map((match) => Number(match[1].replace(',', '.')))
-    .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
-
-  // Prefer prices found near the exact product name. The lowest candidate is the likely current promotional price.
-  const candidates = [...new Set(visiblePrices.length ? visiblePrices : jsonPrices)].sort((a, b) => a - b);
-  if (!candidates.length) {
-    throw new Error('Не удалось найти цену рядом с названием товара. Старое состояние цены сохранено.');
-  }
-
+  const candidates = [...new Set(visiblePrices)].sort((a, b) => a - b);
+  if (!candidates.length) throw new Error('Не удалось найти цену рядом с названием товара.');
   const currentPrice = candidates[0];
   const regularPrice = candidates.find((price) => price > currentPrice) ?? null;
   return { currentPrice, regularPrice, isSale: regularPrice !== null && currentPrice < regularPrice };
+}
+
+async function getCurrentPrice() {
+  try {
+    const prices = await fetchCatalogPrice();
+    console.log('Price source: Silpo public catalog API.');
+    return { ...prices, source: `Silpo public catalog API (filial ${filialId})` };
+  } catch (apiError) {
+    console.warn(`Catalog API unavailable: ${apiError.message}`);
+  }
+
+  const response = await fetch(productUrl, {
+    headers: { ...browserHeaders, referer: 'https://silpo.ua/' },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!response.ok) throw new Error(`Catalog API failed and Silpo product page returned HTTP ${response.status}`);
+  const prices = extractPricesFromHtml(await response.text());
+  console.log('Price source: Silpo product page fallback.');
+  return { ...prices, source: 'official Silpo product page' };
 }
 
 async function readPreviousState() {
@@ -82,17 +205,7 @@ async function sendEmail(subject, body, html) {
 }
 
 async function main() {
-  const response = await fetch(productUrl, {
-    headers: {
-      'user-agent': 'ShrimpWatch/1.0 (price monitoring; contact repository owner)',
-      accept: 'text/html,application/xhtml+xml',
-    },
-    signal: AbortSignal.timeout(20000),
-  });
-  if (!response.ok) throw new Error(`Silpo product page returned HTTP ${response.status}`);
-
-  const html = await response.text();
-  const prices = extractPrices(html);
+  const prices = await getCurrentPrice();
   const previous = await readPreviousState();
   const now = new Date().toISOString();
   const previousPrice = Number(previous?.currentPrice);
@@ -101,10 +214,7 @@ async function main() {
   const shouldAlert = belowThreshold && (!wasBelowThreshold || previous?.alertEmailSent !== true);
 
   const previousHistory = Array.isArray(previous?.priceHistory) ? previous.priceHistory : [];
-  const priceHistory = [
-    ...previousHistory,
-    { priceUah: prices.currentPrice, checkedAt: now },
-  ].slice(-180);
+  const priceHistory = [...previousHistory, { priceUah: prices.currentPrice, checkedAt: now }].slice(-180);
 
   const state = {
     product: productName,
@@ -117,10 +227,9 @@ async function main() {
     alertEmailSent: belowThreshold && wasBelowThreshold ? previous?.alertEmailSent === true : false,
     lastCheckedAt: now,
     priceHistory,
-    source: 'official Silpo product page',
-    storeSpecificAvailability: 'not_verified_by_public_product_page',
+    source: prices.source,
+    storeSpecificAvailability: 'not_verified_by_public_catalog',
   };
-  await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
   console.log(JSON.stringify({ ...state, previousPrice: previous?.currentPrice ?? null, shouldAlert }, null, 2));
 
   if (shouldAlert) {
@@ -133,8 +242,9 @@ async function main() {
       checkedAt: now,
     });
     state.alertEmailSent = await sendEmail(email.subject, email.text, email.html);
-    await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
   }
+
+  await writeFile(statePath, `${JSON.stringify(state, null, 2)}\n`);
 }
 
 main().catch((error) => {
