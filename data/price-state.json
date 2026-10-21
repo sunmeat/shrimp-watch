@@ -7,7 +7,7 @@
   "alertPriceThreshold": 40,
   "belowThreshold": true,
   "alertEmailSent": true,
-  "lastCheckedAt": "2026-10-18T09:36:18.746Z",
+  "lastCheckedAt": "2026-10-21T07:37:33.435Z",
   "priceHistory": [
     {
       "priceUah": 29.9,
@@ -20,6 +20,10 @@
     {
       "priceUah": 29.9,
       "checkedAt": "2026-10-18T09:36:18.746Z"
+    },
+    {
+      "priceUah": 29.9,
+      "checkedAt": "2026-10-21T07:37:33.435Z"
     }
   ],
   "source": "Silpo product page via text-reader proxy",
