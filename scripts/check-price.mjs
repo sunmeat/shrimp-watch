@@ -129,30 +129,21 @@ async function fetchCatalogPrice() {
 }
 
 function extractPricesFromHtml(html) {
-  const clean = decodeHtml(html
+  // Reader proxy yields Markdown, whereas Silpo itself returns HTML.
+  // Anchor to the exact product heading and stop before recommendations.
+  const normalized = decodeHtml(html
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' '));
-  const normalized = clean.toLocaleLowerCase('uk-UA');
-  const matches = [];
-  for (const name of productNameVariants) {
-    let index = normalized.indexOf(name.toLocaleLowerCase('uk-UA'));
-    while (index >= 0) {
-      // Product pages put the current and crossed-out prices immediately after the title.
-      // Never scan thousands of characters: that can pick up unrelated products.
-      const nearby = clean.slice(index + name.length, index + name.length + 240);
-      const prices = [...nearby.matchAll(/(\d{1,4}[.,]\d{2})\s*(?:грн|₴)/gi)]
-        .map(match => Number(match[1].replace(',', '.')))
-        .filter(price => price > 0 && price < 1000);
-      if (prices.length) matches.push(prices);
-      index = normalized.indexOf(name.toLocaleLowerCase('uk-UA'), index + name.length);
-    }
-  }
-  if (!matches.length) throw new Error('Target product price was not found near its title.');
-  // The first visible price is the selling price; the second is usually crossed out.
-  // Do not use the minimum price across unrelated sections.
-  const prices = matches[0];
+  const titlePattern = /(?:^|[#\n]\s*)креветка\s+королівська\s+сира[, ]+\s*дефростована\s+40\/60(?:,\s*100\s*г)?/im;
+  const title = titlePattern.exec(normalized);
+  if (!title) throw new Error('Target product heading was not found in product page.');
+  const nearby = normalized.slice(title.index + title[0].length, title.index + title[0].length + 260);
+  const prices = [...nearby.matchAll(/(\d{1,4}[.,]\d{2})\s*(?:грн|₴)/gi)]
+    .map(match => Number(match[1].replace(',', '.')))
+    .filter(price => price > 0 && price < 1000);
+  if (!prices.length) throw new Error('No selling price found next to product heading.');
   const currentPrice = prices[0];
   const regularPrice = prices.slice(1).find(price => price > currentPrice) ?? null;
   return { currentPrice, regularPrice, isSale: regularPrice !== null };
