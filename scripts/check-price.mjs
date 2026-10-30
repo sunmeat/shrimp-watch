@@ -130,8 +130,8 @@ async function fetchCatalogPrice() {
 
 function extractPricesFromHtml(html) {
   const clean = decodeHtml(html
-    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' ')
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
+    .replace(/<script\\b[^>]*>[\\s\\S]*?<\/script>/gi, ' ')
+    .replace(/<style\\b[^>]*>[\\s\\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\\s+/g, ' '));
   const normalized = clean.toLocaleLowerCase('uk-UA');
