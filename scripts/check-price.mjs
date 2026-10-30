@@ -129,48 +129,47 @@ async function fetchCatalogPrice() {
 }
 
 function extractPricesFromHtml(html) {
-  const decodeText = (value) => decodeHtml(value
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+  const clean = decodeHtml(html
+    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, ' ')
+    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' '));
-
-  const clean = decodeText(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' '));
-  const lower = clean.toLocaleLowerCase('uk-UA');
-  const titleIndexes = [];
+    .replace(/\\s+/g, ' '));
+  const normalized = clean.toLocaleLowerCase('uk-UA');
+  const matches = [];
   for (const name of productNameVariants) {
-    const needle = name.toLocaleLowerCase('uk-UA');
-    let from = 0;
-    while (from < lower.length) {
-      const index = lower.indexOf(needle, from);
-      if (index < 0) break;
-      titleIndexes.push(index);
-      from = index + needle.length;
+    let index = normalized.indexOf(name.toLocaleLowerCase('uk-UA'));
+    while (index >= 0) {
+      // Product pages put the current and crossed-out prices immediately after the title.
+      // Never scan thousands of characters: that can pick up unrelated products.
+      const nearby = clean.slice(index + name.length, index + name.length + 240);
+      const prices = [...nearby.matchAll(/(\\d{1,4}[.,]\\d{2})\\s*(?:грн|₴)/gi)]
+        .map(match => Number(match[1].replace(',', '.')))
+        .filter(price => price > 0 && price < 1000);
+      if (prices.length) matches.push(prices);
+      index = normalized.indexOf(name.toLocaleLowerCase('uk-UA'), index + name.length);
     }
   }
-
-  for (const titleIndex of [...new Set(titleIndexes)].sort((a, b) => a - b)) {
-    const excerpt = clean.slice(titleIndex, titleIndex + 2500);
-    const visiblePrices = [...excerpt.matchAll(/([0-9]{1,4}[.,][0-9]{2})\s*(?:грн|₴)/gi)]
-      .map((match) => Number(match[1].replace(',', '.')))
-      .filter((price) => Number.isFinite(price) && price > 0 && price < 100000);
-    if (!visiblePrices.length) continue;
-
-    const candidates = [...new Set(visiblePrices)].sort((a, b) => a - b);
-    const currentPrice = candidates[0];
-    const regularPrice = candidates.find((price) => price > currentPrice) ?? null;
-    return { currentPrice, regularPrice, isSale: regularPrice !== null && currentPrice < regularPrice };
-  }
-
-  throw new Error('Не удалось найти цену рядом с названием товара в полученном тексте.');
+  if (!matches.length) throw new Error('Target product price was not found near its title.');
+  // The first visible price is the selling price; the second is usually crossed out.
+  // Do not use the minimum price across unrelated sections.
+  const prices = matches[0];
+  const currentPrice = prices[0];
+  const regularPrice = prices.slice(1).find(price => price > currentPrice) ?? null;
+  return { currentPrice, regularPrice, isSale: regularPrice !== null };
 }
 
 async function getCurrentPrice() {
+  // Prefer the exact product page. Catalog search can return other variants or stale prices.
   try {
-    const prices = await fetchCatalogPrice();
-    console.log('Price source: Silpo public catalog API.');
-    return { ...prices, source: `Silpo public catalog API (filial ${filialId})` };
-  } catch (apiError) {
-    console.warn(`Catalog API unavailable: ${apiError.message}`);
+    const response = await fetch(productUrl, {
+      headers: { ...browserHeaders, referer: 'https://silpo.ua/' },
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const prices = extractPricesFromHtml(await response.text());
+    return { ...prices, source: 'official Silpo product page' };
+  } catch (error) {
+    console.warn(`Official product page unavailable: ${error.message}`);
   }
 
   try {
@@ -179,23 +178,16 @@ async function getCurrentPrice() {
       headers: { accept: 'text/plain', 'user-agent': 'ShrimpWatch/1.0' },
       signal: AbortSignal.timeout(25000),
     });
-    if (!response.ok) throw new Error(`Reader proxy returned HTTP ${response.status}`);
-    const text = await response.text();
-    const prices = extractPricesFromHtml(text);
-    console.log('Price source: Silpo page via text-reader proxy.');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const prices = extractPricesFromHtml(await response.text());
     return { ...prices, source: 'Silpo product page via text-reader proxy' };
-  } catch (proxyError) {
-    console.warn(`Reader proxy unavailable: ${proxyError.message}`);
+  } catch (error) {
+    console.warn(`Reader proxy unavailable: ${error.message}`);
   }
 
-  const response = await fetch(productUrl, {
-    headers: { ...browserHeaders, referer: 'https://silpo.ua/' },
-    signal: AbortSignal.timeout(20000),
-  });
-  if (!response.ok) throw new Error(`Catalog API and reader proxy failed; Silpo product page returned HTTP ${response.status}`);
-  const prices = extractPricesFromHtml(await response.text());
-  console.log('Price source: Silpo product page fallback.');
-  return { ...prices, source: 'official Silpo product page' };
+  // Catalog is a last resort: prices can differ by filial.
+  const prices = await fetchCatalogPrice();
+  return { ...prices, source: `Silpo public catalog API (filial ${filialId})` };
 }
 
 async function readPreviousState() {
