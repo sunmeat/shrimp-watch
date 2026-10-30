@@ -130,10 +130,10 @@ async function fetchCatalogPrice() {
 
 function extractPricesFromHtml(html) {
   const clean = decodeHtml(html
-    .replace(/<script\\b[^>]*>[\\s\\S]*?<\/script>/gi, ' ')
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\/style>/gi, ' ')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/\\s+/g, ' '));
+    .replace(/\s+/g, ' '));
   const normalized = clean.toLocaleLowerCase('uk-UA');
   const matches = [];
   for (const name of productNameVariants) {
@@ -142,7 +142,7 @@ function extractPricesFromHtml(html) {
       // Product pages put the current and crossed-out prices immediately after the title.
       // Never scan thousands of characters: that can pick up unrelated products.
       const nearby = clean.slice(index + name.length, index + name.length + 240);
-      const prices = [...nearby.matchAll(/(\\d{1,4}[.,]\\d{2})\\s*(?:грн|₴)/gi)]
+      const prices = [...nearby.matchAll(/(\d{1,4}[.,]\d{2})\s*(?:грн|₴)/gi)]
         .map(match => Number(match[1].replace(',', '.')))
         .filter(price => price > 0 && price < 1000);
       if (prices.length) matches.push(prices);
