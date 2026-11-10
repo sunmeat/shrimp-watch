@@ -171,15 +171,24 @@ async function getCurrentPrice() {
       signal: AbortSignal.timeout(25000),
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const prices = extractPricesFromHtml(await response.text());
+    const proxyBody = await response.text();
+    console.log(`Reader proxy response: ${proxyBody.slice(0, 500).replace(/\s+/g, ' ')}`);
+    if (/Title:\s*(?:404|403|Not Found|Access Denied)|Warning:\s*Target URL returned error/i.test(proxyBody)) {
+      throw new Error('Reader proxy returned an upstream error, not a product listing.');
+    }
+    const prices = extractPricesFromHtml(proxyBody);
     return { ...prices, source: 'Silpo product page via text-reader proxy' };
   } catch (error) {
     console.warn(`Reader proxy unavailable: ${error.message}`);
   }
 
   // Catalog is a last resort: prices can differ by filial.
-  const prices = await fetchCatalogPrice();
-  return { ...prices, source: `Silpo public catalog API (filial ${filialId})` };
+  try {
+    const prices = await fetchCatalogPrice();
+    return { ...prices, source: `Silpo public catalog API (filial ${filialId})` };
+  } catch (error) {
+    throw new Error(`All price sources failed; last catalog error: ${error.message}. No stale price will be written.`);
+  }
 }
 
 async function readPreviousState() {
