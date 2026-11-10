@@ -136,10 +136,11 @@ function extractPricesFromHtml(html) {
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' '));
-  const titlePattern = /(?:^|[#\n]\s*)креветка\s+королівська\s+сира[, ]+\s*дефростована\s+40\/60(?:,\s*100\s*г)?/im;
+  // HTML tags have already been stripped, so do not require Markdown heading markers.
+  const titlePattern = /креветка\\s+королівська\\s+сира[, ]+\\s*дефростована\\s+40\\/60(?:,\\s*100\\s*г)?/i;
   const title = titlePattern.exec(normalized);
   if (!title) throw new Error('Target product heading was not found in product page.');
-  const nearby = normalized.slice(title.index + title[0].length, title.index + title[0].length + 260);
+  const nearby = normalized.slice(title.index + title[0].length, title.index + title[0].length + 180);
   const prices = [...nearby.matchAll(/(\d{1,4}[.,]\d{2})\s*(?:грн|₴)/gi)]
     .map(match => Number(match[1].replace(',', '.')))
     .filter(price => price > 0 && price < 1000);
