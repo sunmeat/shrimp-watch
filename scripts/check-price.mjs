@@ -137,7 +137,7 @@ function extractPricesFromHtml(html) {
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' '));
   // HTML tags have already been stripped, so do not require Markdown heading markers.
-  const titlePattern = /креветка\\s+королівська\\s+сира[, ]+\\s*дефростована\\s+40\\/60(?:,\\s*100\\s*г)?/i;
+  const titlePattern = /креветка\s+королівська\s+сира[, ]+\s*дефростована\s+40\/60(?:,\s*100\s*г)?/i;
   const title = titlePattern.exec(normalized);
   if (!title) throw new Error('Target product heading was not found in product page.');
   const nearby = normalized.slice(title.index + title[0].length, title.index + title[0].length + 180);
