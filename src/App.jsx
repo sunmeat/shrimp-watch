@@ -53,7 +53,7 @@ export default function App() {
         const data = await response.json();
         if (!active) return;
         setStatus(data);
-        saleRef.current = Boolean(data.latestCheck?.isSale) && Boolean(data.latestCheck?.checkedAt) && Date.now() - new Date(data.latestCheck.checkedAt).getTime() < 12 * 60 * 60 * 1000;
+        saleRef.current = data.latestCheck?.priceScope !== 'reference_kyiv' && Boolean(data.latestCheck?.isSale) && Boolean(data.latestCheck?.checkedAt) && Date.now() - new Date(data.latestCheck.checkedAt).getTime() < 12 * 60 * 60 * 1000;
       } catch {
         if (active) setStatus(null);
       }
@@ -112,7 +112,8 @@ export default function App() {
   const latest = status?.latestCheck;
   const lastCheckTime = latest?.checkedAt ? new Date(latest.checkedAt).getTime() : NaN;
   const isFresh = Number.isFinite(lastCheckTime) && Date.now() - lastCheckTime >= 0 && Date.now() - lastCheckTime < 12 * 60 * 60 * 1000;
-  const isSale = isFresh && Boolean(latest?.isSale);
+  const isReference = latest?.priceScope === 'reference_kyiv';
+  const isSale = isFresh && !isReference && Boolean(latest?.isSale);
   const currentPrice = isFresh && latest && Number.isFinite(Number(latest.priceUah)) && Number(latest.priceUah) > 0 ? Number(latest.priceUah) : null;
   const priceHistory = (status?.priceHistory ?? []).filter(point => Number.isFinite(point.priceUah) && point.priceUah > 0);
   const historyWindow = priceHistory.slice(-14);
@@ -125,12 +126,13 @@ export default function App() {
   const fact = SHRIMP_FACTS[factIndex];
   const recipe = SHRIMP_RECIPES[recipeIndex];
   const checkedAt = latest?.checkedAt ? new Date(latest.checkedAt).toLocaleString('uk-UA') : null;
+  const observedAt = latest?.observedAt ? new Date(latest.observedAt).toLocaleString('uk-UA', { timeZone: 'Europe/Kyiv' }) : checkedAt;
 
   return <main className="shell odessa-shell">
     <div className="odessa-ribbon">ОДЕСА МАМА · МОРЕ ПОРУЧ · ЗНИЖКИ У СПРАВІ</div>
     <nav className="nav">
       <a className="brand" href="#"><span>🦐</span><b>SHRIMP<span>WATCH</span><small>КРЕВЕТОЧНА РОЗВЕДКА</small></b></a>
-      <span className="live"><i/> {!isFresh ? "Дані застаріли" : isSale ? "Є знижка!" : "Ціна без акції"}</span>
+      <span className="live"><i/> {!isFresh ? "Дані застаріли" : isReference ? "Довідкова ціна: Київ" : isSale ? "Є знижка!" : "Ціна без акції"}</span>
     </nav>
 
     <section className="hero">
@@ -168,16 +170,17 @@ export default function App() {
       <article className="card price-card">
         <div className="label">КРЕВЕТОЧНИЙ КУРС <span className="tag">40/60</span></div>
         <div className="product">🦐</div><h2>Королівська креветка</h2><p>{PRODUCT}</p><hr/>
-        <div className="price"><div><small>Ціна за 100 грамів, як належить</small><strong>{currentPrice != null ? currentPrice.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "Немає свіжої ціни"} <sub>{currentPrice != null ? "₴ / 100 г" : ''}</sub></strong></div><span>{!isFresh ? "⚠️ Перевірка застаріла" : isSale ? "🎉 Є акція!" : "Без паніки"}<br/>{checkedAt ? "Перевірено: " + checkedAt : "Ціна вказана у картці Silpo"}</span></div>
+        <div className="price"><div><small>Ціна за 100 грамів, як належить</small><strong>{currentPrice != null ? currentPrice.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "Немає свіжої ціни"} <sub>{currentPrice != null ? "₴ / 100 г" : ''}</sub></strong></div><span>{!isFresh ? "⚠️ Перевірка застаріла" : isReference ? "📍 Ціна для Києва" : isSale ? "🎉 Є акція!" : "Без паніки"}<br/>{checkedAt ? isReference ? "Джерело: " + observedAt : "Перевірено: " + checkedAt : "Ціна вказана у картці Silpo"}</span></div>
         {!latest?.checkedAt && <p className="price-hint">У картці Silpo вказано {currentPrice != null ? currentPrice.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " грн за 100 г" : "що ціна поки не отримана"}. Автоматичний моніторинг ще не підтвердив її самостійно.</p>}
         <a className="link" href="https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122" target="_blank" rel="noreferrer">Перевірити у продавця ↗</a>
+        {isReference && <a className="link" href="https://forly.club/product/krevetka-korolivska-syra-defrostovana-40-60-eyy201-01m6z4dnjjqz69f83m0ceyy201?chain=silpo" target="_blank" rel="noreferrer">Джерело: Forly (Київ) ↗</a>}
       </article>
       <article className="card status-card">
         <div className="label">НАСТРІЙ НА ПРИВОЗІ <ShieldCheck size={15}/></div>
         <div className="status-icon">{isSale ? '🥳' : '☕'}</div>
         <h2>{isSale ? "О, тримайте мене семеро!" : "Спокійно, ми перевіримо все"}</h2>
-        <p>{isFresh ? "Ціна нещодавно отримана. Наявність товару у магазині не підтверджено." : "Остання успішна перевірка застаріла. Ціна та акція приховані до нового підтвердження."}</p>
-        <div className="warning">Ціна береться з сторінки товару. Наявність у конкретному магазині не підтверджується.</div>
+        <p>{isReference && isFresh ? "Орієнтовна ціна Сільпо за даними Forly для Києва. Наявність і ціна в Одесі не підтверджені." : isFresh ? "Ціна нещодавно отримана. Наявність товару у магазині не підтверджено." : "Остання успішна перевірка застаріла. Ціна та акція приховані до нового підтвердження."}</p>
+        <div className="warning">{isReference ? "Джерело: Forly.club. Ціна перевірена джерелом " + observedAt + ". Перевірка наявності в Одесі недоступна." : "Ціна береться зі сторінки товару. Наявність у конкретному магазині не підтверджується."}</div>
       </article>
     </section>
 
