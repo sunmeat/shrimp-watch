@@ -6,11 +6,11 @@ const catalogApiUrl = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalo
 const filialId = process.env.SILPO_FILIAL_ID || '2405';
 const statePath = 'data/price-state.json';
 const alertPriceThreshold = 40;
-const productName = 'Королевская креветка сырая, дефростированная 40/60';
+const productName = "Королівська креветка сира, дефростована 40/60";
 const productNameVariants = [
-  'Креветка королівська сира дефростована 40/60',
-  'Креветка королівська сира, дефростована 40/60',
-  'Креветка королівська сира дефростована 40/60 100г',
+  "Креветка королівська сира дефростована 40/60",
+  "Креветка королівська сира, дефростована 40/60",
+  "Креветка королівська сира дефростована 40/60 100г",
 ];
 
 const browserHeaders = {
@@ -115,7 +115,7 @@ async function fetchCatalogPrice() {
     body: JSON.stringify({
       method: 'GetSimpleCatalogItems',
       data: {
-        customFilter: 'Креветка королівська сира дефростована 40/60',
+        customFilter: "Креветка королівська сира дефростована 40/60",
         filialId,
         skuPerPage: 100,
         pageNumber: 1,

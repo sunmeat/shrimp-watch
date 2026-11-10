@@ -3,19 +3,19 @@ import { Sparkles, Waves, ShieldCheck, Heart, Fish, Coffee, ChevronRight, ChefHa
 import { SHRIMP_FACTS, SHRIMP_RECIPES } from './shrimp-content.js';
 import ShrimpMood from './ShrimpMood.jsx';
 
-const PRODUCT = 'Королевская креветка сырая, дефростированная, 40/60';
+const PRODUCT = "Королівська креветка сира, дефростована, 40/60";
 const SONYA_WISHES = [
-  'Ой, золотце, шоб у тебя всё было и тебе за это ничего не было! А креветочка пусть будет по акции!',
-  'Таки ты человек с хорошим вкусом! Не каждый день встретишь такую душу и такую охоту за скидками.',
-  'Шоб здоровье было крепкое, настроение морское, а цены в магазине маленькие-маленькие!',
-  'Сонечка тебе желает: денег полный кошелёк, дома мир, на сердце тепло, а креветки по цене семечек!',
-  'Ты посмотри на него, какой умничка! И скидки ищет, и красиво живёт. Шоб тебе всё возвращалось добром!',
-  'Пусть море будет ласковым, одесский ветер попутным, а каждая покупка приносит радость, а не сердцебиение на кассе!',
-  'Золотце, у тебя умная головушка и доброе сердце. Шоб жизнь отвечала тебе тем же!',
-  'Шоб тебе встречались хорошие люди, честные цены и креветки по королевской скидке!',
-  'Ты человек с достоинством и вкусом! Пусть удача сама кладёт приятные сюрпризы в твою корзину.',
-  'Береги себя, мой хороший. Ты важнее любой скидки, даже самой королевской!',
-  'Шоб дома было тепло, в сердце спокойно, а на ценниках цифры радовали глаз!'
+  "Ой, золотце, щоб у тебе все було і тобі за це нічого не було! А креветочка нехай буде по акції!",
+  "Така ти людина з гарним смаком! Не щодня зустрінеш таку душу і таке полювання на знижки.",
+  "Щоб здоров’я було міцним, настрій морський, а ціни в магазині маленькі-маленькі!",
+  "Сонечка тобі бажає: грошей повний гаманець, вдома мир, на серці тепло, а креветки за ціною насіння!",
+  "Ти подивися на нього, який розумник! І знижки шукає, і гарно живе. Щоб тобі все поверталося добром!",
+  "Нехай море буде лагідним, одеський вітер попутним, а кожна покупка приносить радість, а не серцебиття на касі!",
+  "Золотце, у тебе розумна голівка і добре серце. Щоб життя відповідало тобі тим самим!",
+  "Щоб тобі зустрічалися хороші люди, чесні ціни та креветки за королівською знижкою!",
+  "Ти людина з гідністю та смаком! Нехай удача сама кладе приємні сюрпризи у твій кошик.",
+  "Бережи себе. Твій добробут важливіший за будь-яку знижку, навіть найкоролівськішу!",
+  "Щоб удома було тепло, у серці спокійно, а на цінниках цифри тішили око!"
 ];
 
 function squeak(context) {
@@ -124,60 +124,60 @@ export default function App() {
   const discountPercent = currentPrice != null && regularPrice > currentPrice ? Math.round((1 - currentPrice / regularPrice) * 100) : null;
   const fact = SHRIMP_FACTS[factIndex];
   const recipe = SHRIMP_RECIPES[recipeIndex];
-  const checkedAt = latest?.checkedAt ? new Date(latest.checkedAt).toLocaleString('ru-RU') : null;
+  const checkedAt = latest?.checkedAt ? new Date(latest.checkedAt).toLocaleString('uk-UA') : null;
 
   return <main className="shell odessa-shell">
-    <div className="odessa-ribbon">ОДЕССА МАМА · МОРЕ РЯДОМ · СКИДКИ ПО ДЕЛУ</div>
+    <div className="odessa-ribbon">ОДЕСА МАМА · МОРЕ ПОРУЧ · ЗНИЖКИ У СПРАВІ</div>
     <nav className="nav">
-      <a className="brand" href="#"><span>🦐</span><b>SHRIMP<span>WATCH</span><small>КРЕВЕТОЧНАЯ РАЗВЕДКА</small></b></a>
-      <span className="live"><i/> {!isFresh ? 'Данные устарели' : isSale ? 'Есть скидка!' : 'Цена без акции'}</span>
+      <a className="brand" href="#"><span>🦐</span><b>SHRIMP<span>WATCH</span><small>КРЕВЕТОЧНА РОЗВЕДКА</small></b></a>
+      <span className="live"><i/> {!isFresh ? "Дані застаріли" : isSale ? "Є знижка!" : "Ціна без акції"}</span>
     </nav>
 
     <section className="hero">
       <div>
-        <div className="eyebrow"><Sparkles size={15}/> ПРИВЕТ, ДУША МОЯ!</div>
-        <h1>Полюбить — так королевские.<br/><em>Покупать — когда выгодно.</em></h1>
-        <p className="lead">У нас всё по-одесски: без паники, с разговором, с хорошим настроением и чтоб покупка была выгодная, а не «мама, шо это было?».</p>
-        <div className="actions"><a className="btn mint" href="#price"><Fish size={17}/> Ну-ка, покажи цену</a><a className="btn dark" href="#sonya"><Heart size={16}/> К тёте Соне</a></div>
-        <div className="fine"><span>✓ Без лишней суеты</span><span>✳ Плановая проверка 4 раза в сутки</span></div>
+        <div className="eyebrow"><Sparkles size={15}/> ПРИВІТ, ДУША МОЯ!</div>
+        <h1>Якщо креветки — то королівські.<br/><em>Купувати коли вигідно.</em></h1>
+        <p className="lead">У нас все по-одеськи: без паніки, з розмовою, з гарним настроєм і щоб покупка була вигідна, а не «мамо, що це було?».</p>
+        <div className="actions"><a className="btn mint" href="#price"><Fish size={17}/> Ану, покажи ціну</a><a className="btn dark" href="#sonya"><Heart size={16}/> До тітки Соні</a></div>
+        <div className="fine"><span>✓ Без зайвої метушні</span><span>✳ Планова перевірка 4 рази на добу</span></div>
       </div>
       <div className="hero-note sonya-hero">
         <div className="sonya-portrait">👒</div>
-        <div className="eyebrow">ОДЕССКАЯ СЛУЖБА ЗАБОТЫ</div>
-        <h2>Тётя Соня всё видит!</h2>
-        <p>Не волнуйся, золотце. Мы тут за ценами следим, креветочки танцуют, а жизнь, между прочим, прекрасная штука. Особенно когда со скидкой.</p>
-        <span className="sonya-sign">Целую, обнимаю. Твоя Соня ❤️</span>
+        <div className="eyebrow">ОДЕСЬКА СЛУЖБА ТУРТІ</div>
+        <h2>Тетя Соня все бачить!</h2>
+        <p>Не хвилюйся, золотце. Ми тут за цінами стежимо, креветочки танцюють, а життя, між іншим, чудова штука. Особливо коли зі знижкою.</p>
+        <span className="sonya-sign">Цілую, обіймаю. Твоя Соня ❤️</span>
       </div>
     </section>
 
-    <section className="dance-section" aria-label="Постоянный танец креветок">
+    <section className="dance-section" aria-label="Постійний танець креветок">
       <div className="dance-heading">
-        <div><div className="eyebrow"><Waves size={15}/> ПРИВОЗ НЕ СПИТ</div><h2>Танцуют, как на свадьбе у племянницы.</h2></div>
-        <span className={isSale ? 'sale-pill sale-active' : 'sale-pill'}><i/>{isSale ? 'АКЦИЯ! ПИ-ПИ-ПИ!' : 'ПОКА ТАНЦУЕМ ДЛЯ ДУШИ'}</span>
+        <div><div className="eyebrow"><Waves size={15}/> Привіз не спить</div><h2>Танцюють, як на весіллі у племінниці.</h2></div>
+        <span className={isSale ? 'sale-pill sale-active' : 'sale-pill'}><i/>{isSale ? "Акція! ПІ-ПІ-ПІ!" : "ПОКИ ТАНЦЮЄМО ДЛЯ ДУШІ"}</span>
       </div>
-      <div className={`dance${danceParty ? ' party' : ''}`} role="button" tabIndex={0} aria-label="Нажми, чтобы устроить креветочную дискотеку" onClick={triggerDance} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); triggerDance(); } }}>
+      <div className={`dance${danceParty ? ' party' : ''}`} role="button" tabIndex={0} aria-label="Натисніть, щоб влаштувати дискотеку креветок" onClick={triggerDance} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); triggerDance(); } }}>
         <div className="disco-beam beam-one"/><div className="disco-beam beam-two"/><div className="orbit one"/><div className="orbit two"/><div className="dance-floor"/>
         <span className="shrimp s1">🦐</span><span className="shrimp s2">🦐</span><span className="shrimp s3">🦐</span>
         <span className="shrimp s4">🦐</span><span className="shrimp s5">🦐</span><span className="shrimp s6">🦐</span><i className="star a">✦</i><i className="star b">✧</i><i className="star c">✺</i><i className="star d">✧</i><i className="confetti confetti-a">✦</i><i className="confetti confetti-b">✧</i><i className="confetti confetti-c">✷</i><i className="confetti confetti-d">✦</i><span className="disco-ball">✺</span>
-        <div className="caption">♫ НЕ ТАНЦУЕТ ТОЛЬКО ТОТ, КТО НЕ СЛЫШИТ МУЗЫКУ</div>
+        <div className="caption">♫ НЕ ТАНЦЮЄ ТІЛЬКИ ТІЙ, ХТО НЕ ЧУЄ МУЗИКУ</div>
       </div>
-      <p className="sound-note">При обнаружении акции креветки пищат. На телефоне сначала коснись экрана, чтобы разрешить звук. Ну шо, поехали!</p>
+      <p className="sound-note">При виявленні акції креветки пищать. Натисніть на екрані, щоб дозволити звук. Ну шо, поїхали!</p>
     </section>
 
     <section className="cards" id="price">
       <article className="card price-card">
-        <div className="label">КРЕВЕТОЧНЫЙ КУРС <span className="tag">40/60</span></div>
-        <div className="product">🦐</div><h2>Королевская креветка</h2><p>{PRODUCT}</p><hr/>
-        <div className="price"><div><small>Цена за 100 граммов, как положено</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Нет свежей цены'} <sub>{currentPrice != null ? '₴ / 100 г' : ''}</sub></strong></div><span>{!isFresh ? '⚠️ Проверка устарела' : isSale ? '🎉 Есть акция!' : 'Без паники'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Цена указана в карточке Silpo'}</span></div>
-        {!latest?.checkedAt && <p className="price-hint">В карточке Silpo указано {currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' грн за 100 г' : 'что цена пока не получена'}. Автоматический мониторинг ещё не подтвердил её самостоятельно.</p>}
-        <a className="link" href="https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122" target="_blank" rel="noreferrer">Проверить у продавца ↗</a>
+        <div className="label">КРЕВЕТОЧНИЙ КУРС <span className="tag">40/60</span></div>
+        <div className="product">🦐</div><h2>Королівська креветка</h2><p>{PRODUCT}</p><hr/>
+        <div className="price"><div><small>Ціна за 100 грамів, як належить</small><strong>{currentPrice != null ? currentPrice.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "Немає свіжої ціни"} <sub>{currentPrice != null ? "₴ / 100 г" : ''}</sub></strong></div><span>{!isFresh ? "⚠️ Перевірка застаріла" : isSale ? "🎉 Є акція!" : "Без паніки"}<br/>{checkedAt ? "Перевірено: " + checkedAt : "Ціна вказана у картці Silpo"}</span></div>
+        {!latest?.checkedAt && <p className="price-hint">У картці Silpo вказано {currentPrice != null ? currentPrice.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " грн за 100 г" : "що ціна поки не отримана"}. Автоматичний моніторинг ще не підтвердив її самостійно.</p>}
+        <a className="link" href="https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122" target="_blank" rel="noreferrer">Перевірити у продавця ↗</a>
       </article>
       <article className="card status-card">
-        <div className="label">НАСТРОЕНИЕ НА ПРИВОЗЕ <ShieldCheck size={15}/></div>
+        <div className="label">НАСТРІЙ НА ПРИВОЗІ <ShieldCheck size={15}/></div>
         <div className="status-icon">{isSale ? '🥳' : '☕'}</div>
-        <h2>{isSale ? 'Ой, держите меня семеро!' : 'Спокойно, мы всё проверим'}</h2>
-        <p>{isFresh ? 'Цена недавно получена. Наличие товара в магазине не подтверждено.' : 'Последняя успешная проверка устарела. Цена и акция скрыты до нового подтверждения.'}</p>
-        <div className="warning">Цена берётся с публичной страницы товара. Наличие в конкретном магазине не подтверждается.</div>
+        <h2>{isSale ? "О, тримайте мене семеро!" : "Спокійно, ми перевіримо все"}</h2>
+        <p>{isFresh ? "Ціна нещодавно отримана. Наявність товару у магазині не підтверджено." : "Остання успішна перевірка застаріла. Ціна та акція приховані до нового підтвердження."}</p>
+        <div className="warning">Ціна береться з сторінки товару. Наявність у конкретному магазині не підтверджується.</div>
       </article>
     </section>
 
@@ -185,9 +185,9 @@ export default function App() {
     <section className="facts-section" id="facts">
       <div className="facts-top">
         <div>
-          <div className="eyebrow"><Sparkles size={15}/> МОРСКИЕ БАЙКИ, КОТОРЫЕ ПРАВДА</div>
-          <h2>100 фактов о креветках</h2>
-          <p>Биология, подводная жизнь, виды, еда и хитрости покупки. Один клик, и Соня достаёт новую историю.</p>
+          <div className="eyebrow"><Sparkles size={15}/> МОРСЬКІ БАЙКИ, ЯКІ ПРАВДА</div>
+          <h2>100 фактів про креветки</h2>
+          <p>Біологія, підводне життя, види, їжа та хитрощі покупки. Один клік, і Соня дістає нову історію.</p>
         </div>
         <span className="facts-count">ФАКТ {factIndex + 1} / {SHRIMP_FACTS.length}</span>
       </div>
@@ -200,10 +200,10 @@ export default function App() {
         </div>
       </article>
       <div className="facts-actions">
-        <button className="btn sonya-btn" type="button" onClick={() => setFactIndex(index => (index + 1) % SHRIMP_FACTS.length)}><Sparkles size={17}/> Ещё факт! <ChevronRight size={17}/></button>
-        <span>Нажимай сколько угодно: все {SHRIMP_FACTS.length} фактов ходят по кругу.</span>
+        <button className="btn sonya-btn" type="button" onClick={() => setFactIndex(index => (index + 1) % SHRIMP_FACTS.length)}><Sparkles size={17}/> Ще факт! <ChevronRight size={17}/></button>
+        <span>Натискай скільки завгодно: усі {SHRIMP_FACTS.length} фактів ходять по колу.</span>
       </div>
-      <div className="facts-foot">Факты относятся к разным видам креветок, поэтому формулировки уточняют, когда свойство характерно не для всех. Наука, золотце, любит точность! 🧠<div className="fact-sources">Источники для проверки: <a href="https://repository.library.noaa.gov/view/noaa/36212/noaa_36212_DS1.pdf" target="_blank" rel="noreferrer">справочник NOAA по биологии креветок</a> · <a href="https://www.fda.gov/food/consumers/advice-about-eating-fish" target="_blank" rel="noreferrer">рекомендации FDA по морепродуктам</a> · <a href="https://www.fisheries.noaa.gov/insight/shrimp-recipes" target="_blank" rel="noreferrer">рецепты NOAA Fisheries</a></div></div>
+      <div className="facts-foot">Факти відносяться до різних видів креветок, тому формулювання уточнюють, коли властивість характерна не для всіх. Наука, золотце, любить точність! 🧠<div className="fact-sources">Джерела для перевірки: <a href="https://repository.library.noaa.gov/view/noaa/36212/noaa_36212_DS1.pdf" target="_blank" rel="noreferrer">довідник NOAA з біології креветок</a> · <a href="https://www.fda.gov/food/consumers/advice-about-eating-fish" target="_blank" rel="noreferrer">рекомендації FDA щодо морепродуктів</a> · <a href="https://www.fisheries.noaa.gov/insight/shrimp-recipes" target="_blank" rel="noreferrer">рецепти NOAA Fisheries</a></div></div>
     </section>
 
     <ShrimpMood />
@@ -211,11 +211,11 @@ export default function App() {
     <section className="recipes-section" id="recipes">
       <div className="index-heading">
         <div>
-          <div className="eyebrow"><ChefHat size={15}/> КУХНЯ ТЁТИ СОНИ</div>
-          <h2>Ну шо, будем вкусно жить?</h2>
-          <p>Десять домашних идей на любой аппетит. Выбирай рецепт и не передерживай креветочки!</p>
+          <div className="eyebrow"><ChefHat size={15}/> КУХНЯ ТЕТІ СОНІ</div>
+          <h2>Ну шо, будемо смачно жити?</h2>
+          <p>Десять домашніх ідей на будь-який апетит. Вибирай рецепт та не перетримуй креветочки!</p>
         </div>
-        <span className="index-stamp">10 РЕЦЕПТОВ</span>
+        <span className="index-stamp">10 РЕЦЕПТІВ</span>
       </div>
       <div className="recipe-layout">
         <div className="recipe-list">
@@ -227,11 +227,11 @@ export default function App() {
           <div className="recipe-hero-icon">{recipe.emoji}</div>
           <div className="recipe-meta"><span>⏱ {recipe.time}</span><span>🍽 {recipe.servings}</span></div>
           <h3>{recipe.title}</h3><p className="recipe-subtitle">{recipe.subtitle}</p>
-          <h4>Что понадобится</h4>
+          <h4>Що знадобиться</h4>
           <ul className="ingredients">{recipe.ingredients.map(item => <li key={item}>{item}</li>)}</ul>
-          <h4>Как готовить</h4>
+          <h4>Як готувати</h4>
           <ol className="recipe-steps">{recipe.steps.map(step => <li key={step}>{step}</li>)}</ol>
-          <div className="recipe-safety">Важно: готовь креветки до плотной, непрозрачной мякоти. Для ориентира FDA рекомендует внутреннюю температуру морепродуктов около 63 °C. Не оставляй готовое блюдо надолго при комнатной температуре.</div>
+          <div className="recipe-safety">Важливо: готуй креветки до щільної, непрозорої м'якоті. Для орієнтиру FDA рекомендує внутрішню температуру морепродуктів близько 63 °C. Не залишай готову страву надовго за кімнатної температури.</div>
         </article>
       </div>
     </section>
@@ -239,19 +239,19 @@ export default function App() {
     <section className="sonya-card" id="sonya">
       <div className="sonya-big">👒</div>
       <div className="sonya-copy">
-        <div className="eyebrow"><Heart size={15}/> СЛОВО ОТ ТЁТИ СОНИ</div>
-        <h2>А теперь комплимент, и не спорь!</h2>
+        <div className="eyebrow"><Heart size={15}/> СЛОВО ВІД ТЕТКИ СОНІ</div>
+        <h2>А тепер комплімент, і не сперечайся!</h2>
         <p className="sonya-wish">«{SONYA_WISHES[wishIndex]}»</p>
-        <button className="btn sonya-btn" type="button" onClick={() => setWishIndex((index) => (index + 1 + Math.floor(Math.random() * (SONYA_WISHES.length - 1))) % SONYA_WISHES.length)}><Coffee size={17}/> Сонечка, ещё пожелание!</button>
+        <button className="btn sonya-btn" type="button" onClick={() => setWishIndex((index) => (index + 1 + Math.floor(Math.random() * (SONYA_WISHES.length - 1))) % SONYA_WISHES.length)}><Coffee size={17}/> Сонечко, ще побажання!</button>
       </div>
-      <div className="sonya-stamp">ОДЕССА<br/>МАМА<br/>♥</div>
+      <div className="sonya-stamp">ОДЕСА<br/>МАМА<br/>♥</div>
     </section>
 
     <section className="steps">
-      <div><b>01</b><h3>Смотрим цену</h3><p>Без фокусов и гаданий, как на Дерибасовской.</p></div>
-      <div><b>02</b><h3>Ловим скидку</h3><p>Если цена падает, креветочная разведка подаёт знак.</p></div>
-      <div><b>03</b><h3>Живём красиво</h3><p>Танцуем, улыбаемся и помним: нервы дороже креветок.</p></div>
+      <div><b>01</b><h3>Дивимося ціну</h3><p>Без фокусів та ворожінь, як на Дерибасівській.</p></div>
+      <div><b>02</b><h3>Ловимо знижку</h3><p>Якщо ціна падає, розвідка креветки подає знак.</p></div>
+      <div><b>03</b><h3>Живемо красиво</h3><p>Танцюємо, посміхаємося і пам'ятаємо: нерви дорожчі за креветки.</p></div>
     </section>
-    <footer><b>🦐 SHRIMPWATCH · ОДЕССА МАМА</b><span>Шоб у тебя всё было хорошо, а цены были ещё лучше!</span><small><i/> СВОИМ ВСЕГДА РАДЫ</small></footer>
+    <footer><b>🦐 SHRIMPWATCH · ОДЕСА МАМА</b><span>Щоб у тебе все було добре, а ціни були ще кращі!</span><small><i/> СВОЇМ ЗАВЖДИ РАДИ</small></footer>
   </main>;
 }

@@ -15,8 +15,8 @@ export default async function handler(_request, response) {
     service: 'ShrimpWatch',
     status: priceState?.lastCheckedAt ? 'monitoring-data-available' : 'waiting-for-first-check',
     product: {
-      name: 'Королевская креветка сырая, дефростированная 40/60',
-      unit: '100 г',
+      name: "Королівська креветка сира, дефростована 40/60",
+      unit: "100 г",
       url: 'https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122'
     },
     latestCheck: priceState ? {
