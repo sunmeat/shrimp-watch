@@ -9,7 +9,7 @@ on:
       - 'data/price-state.json'
       - '.github/workflows/price-watch.yml'
   schedule:
-    - cron: '37 * * * *'
+    - cron: '17 0,6,12,18 * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Show trigger and runner time
         run: |
