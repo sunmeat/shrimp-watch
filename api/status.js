@@ -24,6 +24,8 @@ export default async function handler(_request, response) {
       regularPriceUah: priceState.regularPrice,
       isSale: priceState.isSale,
       checkedAt: priceState.lastCheckedAt,
+      observedAt: priceState.observedAt ?? priceState.lastCheckedAt,
+      priceScope: priceState.priceScope ?? 'unverified_store_stock',
       source: priceState.source,
       storeSpecificAvailability: priceState.storeSpecificAvailability
     } : null,
