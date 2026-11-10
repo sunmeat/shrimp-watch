@@ -182,6 +182,12 @@ async function getCurrentPrice() {
     console.warn(`Reader proxy unavailable: ${error.message}`);
   }
 
+  try {
+    return await fetchForlyPrice();
+  } catch (error) {
+    console.warn('Forly reference unavailable: ' + error.message);
+  }
+
   // Catalog is a last resort: prices can differ by filial.
   try {
     const prices = await fetchCatalogPrice();
@@ -189,6 +195,59 @@ async function getCurrentPrice() {
   } catch (error) {
     throw new Error(`All price sources failed; last catalog error: ${error.message}. No stale price will be written.`);
   }
+}
+
+
+async function fetchForlyPrice() {
+  // Independent public listing. This is a Kyiv reference price, not Odesa stock verification.
+  const url = 'https://forly.club/product/krevetka-korolivska-syra-defrostovana-40-60-eyy201-01m6z4dnjjqz69f83m0ceyy201?chain=silpo';
+  const response = await fetch(url, {
+    headers: {
+      'user-agent': browserHeaders['user-agent'],
+      accept: 'text/html,application/xhtml+xml',
+      'accept-language': browserHeaders['accept-language'],
+    },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!response.ok) throw new Error('Forly HTTP ' + response.status);
+  const html = await response.text();
+  const text = decodeHtml(html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' '));
+  const title = 'Креветка королівська сира дефростована 40/60';
+  const pos = text.toLocaleLowerCase('uk-UA').indexOf(title.toLocaleLowerCase('uk-UA'));
+  if (pos < 0) throw new Error('Forly target product title not found; sample: ' + text.slice(0, 250));
+  const scope = text.slice(pos, pos + 4000);
+  const priceArea = scope.indexOf('Ціна зараз');
+  if (priceArea < 0) throw new Error('Forly price section missing; sample: ' + scope.slice(0, 350));
+  const area = scope.slice(priceArea, priceArea + 850);
+  if (!/Сільпо/i.test(area)) throw new Error('Forly store does not match Silpo');
+  const unit = /(\d[\d\s\u00a0\u202f]*[.,]\d{2})\s*₴\s*\/\s*кг/i.exec(area);
+  if (!unit) throw new Error('Forly unit price not found; sample: ' + area.slice(0, 450));
+  const perKg = parseMoney(unit[1]);
+  if (!(perKg > 0)) throw new Error('Forly invalid per-kg price');
+  const stamp = /перевірено\s+(\d{2})\.(\d{2})\.(\d{4})\s+о\s+(\d{2}):(\d{2})/i.exec(area);
+  if (!stamp) throw new Error('Forly missing source verification date; sample: ' + area.slice(0, 450));
+  const [, dd, mm, yyyy, hh, minute] = stamp;
+  const checkedAt = new Date(yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minute + ':00+02:00').toISOString();
+  const age = Date.now() - Date.parse(checkedAt);
+  if (age < -3600000 || age > 48 * 3600000) {
+    throw new Error('Forly price too old or future-dated: ' + checkedAt);
+  }
+  const old = /було\s+(\d[\d\s\u00a0\u202f]*[.,]\d{2})\s*₴/i.exec(area);
+  const oldPerKg = old ? parseMoney(old[1]) : null;
+  const currentPrice = Math.round(perKg * 10) / 100;
+  const regularPrice = oldPerKg > perKg ? Math.round(oldPerKg * 10) / 100 : null;
+  console.log('Forly verified price', JSON.stringify({ currentPrice, regularPrice, checkedAt, market: 'Kyiv' }));
+  return {
+    currentPrice, regularPrice, isSale: regularPrice !== null,
+    source: 'Forly.club Silpo listing (Kyiv reference)',
+    observedAt: checkedAt,
+    priceScope: 'reference_kyiv',
+    storeSpecificAvailability: 'not_verified_for_odesa',
+  };
 }
 
 async function readPreviousState() {
@@ -226,7 +285,7 @@ async function main() {
   const previousPrice = Number(previous?.currentPrice);
   const belowThreshold = prices.currentPrice < alertPriceThreshold;
   const wasBelowThreshold = Number.isFinite(previousPrice) && previousPrice > 0 && previousPrice < alertPriceThreshold;
-  const shouldAlert = belowThreshold && (!wasBelowThreshold || previous?.alertEmailSent !== true);
+  const shouldAlert = prices.priceScope !== 'reference_kyiv' && belowThreshold && (!wasBelowThreshold || previous?.alertEmailSent !== true);
 
   const previousHistory = Array.isArray(previous?.priceHistory) ? previous.priceHistory : [];
   const priceHistory = [...previousHistory, { priceUah: prices.currentPrice, checkedAt: now }].slice(-180);
@@ -243,7 +302,9 @@ async function main() {
     lastCheckedAt: now,
     priceHistory,
     source: prices.source,
-    storeSpecificAvailability: 'not_verified_by_public_catalog',
+    observedAt: prices.observedAt ?? now,
+    priceScope: prices.priceScope ?? 'unverified_store_stock',
+    storeSpecificAvailability: prices.storeSpecificAvailability ?? 'not_verified_by_public_catalog',
   };
   console.log(JSON.stringify({ ...state, previousPrice: previous?.currentPrice ?? null, shouldAlert }, null, 2));
 
