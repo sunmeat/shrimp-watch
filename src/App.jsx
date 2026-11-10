@@ -53,7 +53,7 @@ export default function App() {
         const data = await response.json();
         if (!active) return;
         setStatus(data);
-        saleRef.current = Boolean(data.latestCheck?.isSale);
+        saleRef.current = Boolean(data.latestCheck?.isSale) && Boolean(data.latestCheck?.checkedAt) && Date.now() - new Date(data.latestCheck.checkedAt).getTime() < 12 * 60 * 60 * 1000;
       } catch {
         if (active) setStatus(null);
       }
@@ -110,8 +110,10 @@ export default function App() {
   };
 
   const latest = status?.latestCheck;
-  const isSale = Boolean(latest?.isSale);
-  const currentPrice = latest && Number.isFinite(Number(latest.priceUah)) && Number(latest.priceUah) > 0 ? Number(latest.priceUah) : null;
+  const lastCheckTime = latest?.checkedAt ? new Date(latest.checkedAt).getTime() : NaN;
+  const isFresh = Number.isFinite(lastCheckTime) && Date.now() - lastCheckTime >= 0 && Date.now() - lastCheckTime < 12 * 60 * 60 * 1000;
+  const isSale = isFresh && Boolean(latest?.isSale);
+  const currentPrice = isFresh && latest && Number.isFinite(Number(latest.priceUah)) && Number(latest.priceUah) > 0 ? Number(latest.priceUah) : null;
   const priceHistory = (status?.priceHistory ?? []).filter(point => Number.isFinite(point.priceUah) && point.priceUah > 0);
   const historyWindow = priceHistory.slice(-14);
   const historyStart = historyWindow[0]?.priceUah;
@@ -128,7 +130,7 @@ export default function App() {
     <div className="odessa-ribbon">ОДЕССА МАМА · МОРЕ РЯДОМ · СКИДКИ ПО ДЕЛУ</div>
     <nav className="nav">
       <a className="brand" href="#"><span>🦐</span><b>SHRIMP<span>WATCH</span><small>КРЕВЕТОЧНАЯ РАЗВЕДКА</small></b></a>
-      <span className="live"><i/> {isSale ? 'Есть скидка!' : 'Стандартная цена'}</span>
+      <span className="live"><i/> {!isFresh ? 'Данные устарели' : isSale ? 'Есть скидка!' : 'Цена без акции'}</span>
     </nav>
 
     <section className="hero">
@@ -137,7 +139,7 @@ export default function App() {
         <h1>Полюбить — так королевские.<br/><em>Покупать — когда выгодно.</em></h1>
         <p className="lead">У нас всё по-одесски: без паники, с разговором, с хорошим настроением и чтоб покупка была выгодная, а не «мама, шо это было?».</p>
         <div className="actions"><a className="btn mint" href="#price"><Fish size={17}/> Ну-ка, покажи цену</a><a className="btn dark" href="#sonya"><Heart size={16}/> К тёте Соне</a></div>
-        <div className="fine"><span>✓ Без лишней суеты</span><span>✳ Проверяем цену каждые 6 часов</span></div>
+        <div className="fine"><span>✓ Без лишней суеты</span><span>✳ Плановая проверка 4 раза в сутки</span></div>
       </div>
       <div className="hero-note sonya-hero">
         <div className="sonya-portrait">👒</div>
@@ -166,7 +168,7 @@ export default function App() {
       <article className="card price-card">
         <div className="label">КРЕВЕТОЧНЫЙ КУРС <span className="tag">40/60</span></div>
         <div className="product">🦐</div><h2>Королевская креветка</h2><p>{PRODUCT}</p><hr/>
-        <div className="price"><div><small>Цена за 100 граммов, как положено</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Ждём'} <sub>{currentPrice != null ? '₴ / 100 г' : ''}</sub></strong></div><span>{isSale ? '🎉 Есть акция!' : 'Без паники'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Цена указана в карточке Silpo'}</span></div>
+        <div className="price"><div><small>Цена за 100 граммов, как положено</small><strong>{currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Нет свежей цены'} <sub>{currentPrice != null ? '₴ / 100 г' : ''}</sub></strong></div><span>{!isFresh ? '⚠️ Проверка устарела' : isSale ? '🎉 Есть акция!' : 'Без паники'}<br/>{checkedAt ? 'Проверено: ' + checkedAt : 'Цена указана в карточке Silpo'}</span></div>
         {!latest?.checkedAt && <p className="price-hint">В карточке Silpo указано {currentPrice != null ? currentPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' грн за 100 г' : 'что цена пока не получена'}. Автоматический мониторинг ещё не подтвердил её самостоятельно.</p>}
         <a className="link" href="https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122" target="_blank" rel="noreferrer">Проверить у продавца ↗</a>
       </article>
@@ -174,7 +176,7 @@ export default function App() {
         <div className="label">НАСТРОЕНИЕ НА ПРИВОЗЕ <ShieldCheck size={15}/></div>
         <div className="status-icon">{isSale ? '🥳' : '☕'}</div>
         <h2>{isSale ? 'Ой, держите меня семеро!' : 'Спокойно, мы всё проверим'}</h2>
-        <p>{latest?.checkedAt ? 'Цена получена, наблюдение продолжается. Статус обновляется автоматически.' : 'Мониторинг ждёт успешной проверки страницы товара. Старые цифры за свежие выдавать не будем.'}</p>
+        <p>{isFresh ? 'Цена недавно получена. Наличие товара в магазине не подтверждено.' : 'Последняя успешная проверка устарела. Цена и акция скрыты до нового подтверждения.'}</p>
         <div className="warning">Цена берётся с публичной страницы товара. Наличие в конкретном магазине не подтверждается.</div>
       </article>
     </section>
