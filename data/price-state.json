@@ -7,7 +7,7 @@
   "alertPriceThreshold": 40,
   "belowThreshold": true,
   "alertEmailSent": true,
-  "lastCheckedAt": "2026-11-14T06:33:39.182Z",
+  "lastCheckedAt": "2026-11-14T18:11:47.817Z",
   "priceHistory": [
     {
       "priceUah": 29.9,
@@ -124,6 +124,10 @@
     {
       "priceUah": 29.9,
       "checkedAt": "2026-11-14T06:33:39.182Z"
+    },
+    {
+      "priceUah": 29.9,
+      "checkedAt": "2026-11-14T18:11:47.817Z"
     }
   ],
   "source": "Forly.club Silpo listing (Kyiv reference)",
