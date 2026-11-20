@@ -1,13 +1,13 @@
 {
   "product": "Королівська креветка сира, дефростована 40/60",
   "productUrl": "https://silpo.ua/product/krevetka-korolivska-syra-defrostovana-40-60-864122",
-  "currentPrice": 29.9,
+  "currentPrice": 34.9,
   "regularPrice": 59.9,
   "isSale": true,
   "alertPriceThreshold": 40,
   "belowThreshold": true,
   "alertEmailSent": true,
-  "lastCheckedAt": "2026-11-19T20:43:03.448Z",
+  "lastCheckedAt": "2026-11-20T07:24:25.108Z",
   "priceHistory": [
     {
       "priceUah": 29.9,
@@ -172,10 +172,14 @@
     {
       "priceUah": 29.9,
       "checkedAt": "2026-11-19T20:43:03.448Z"
+    },
+    {
+      "priceUah": 34.9,
+      "checkedAt": "2026-11-20T07:24:25.108Z"
     }
   ],
   "source": "Forly.club Silpo listing (Kyiv reference)",
-  "observedAt": "2026-11-19T03:34:00.000Z",
+  "observedAt": "2026-11-20T03:00:00.000Z",
   "priceScope": "reference_kyiv",
   "storeSpecificAvailability": "not_verified_for_odesa"
 }
