@@ -7,7 +7,7 @@
   "alertPriceThreshold": 40,
   "belowThreshold": true,
   "alertEmailSent": true,
-  "lastCheckedAt": "2026-11-24T22:31:34.472Z",
+  "lastCheckedAt": "2026-11-25T08:43:02.667Z",
   "priceHistory": [
     {
       "priceUah": 29.9,
@@ -212,10 +212,14 @@
     {
       "priceUah": 34.9,
       "checkedAt": "2026-11-24T22:31:34.472Z"
+    },
+    {
+      "priceUah": 34.9,
+      "checkedAt": "2026-11-25T08:43:02.667Z"
     }
   ],
   "source": "Forly.club Silpo listing (Kyiv reference)",
-  "observedAt": "2026-11-24T03:34:00.000Z",
+  "observedAt": "2026-11-25T03:34:00.000Z",
   "priceScope": "reference_kyiv",
   "storeSpecificAvailability": "not_verified_for_odesa"
 }
